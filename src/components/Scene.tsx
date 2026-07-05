@@ -1,16 +1,20 @@
-import { Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Pokeball } from './Pokeball';
-import { Studio } from './Studio';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import type { LifePropId } from '../data/lifeProps';
 
+const LazyStudio = lazy(() => import('./Studio').then((module) => ({ default: module.Studio })));
+
 interface SceneProps {
   opened: boolean;
+  charging: boolean;
+  prepareStudio: boolean;
   activePropId: LifePropId;
   onCenterClick: () => void;
   onSelectProp: (id: LifePropId) => void;
+  onStudioReady: () => void;
 }
 
 function RotatableCapsule({ opened, children }: { opened: boolean; children: ReactNode }) {
@@ -58,19 +62,27 @@ function RotatableCapsule({ opened, children }: { opened: boolean; children: Rea
 
 function CameraManager({ opened }: { opened: boolean }) {
   const reducedMotion = useReducedMotion();
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const targetPosition = useMemo(() => new THREE.Vector3(), []);
   const targetLookAt = useMemo(() => new THREE.Vector3(), []);
   const currentLookAt = useRef(new THREE.Vector3(0, 0.03, 1.15));
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    if (!opened) {
+    const compact = size.width <= 720;
+
+    if (!opened && compact) {
+      targetPosition.set(0, 0.08, 2.62);
+      targetLookAt.set(0, 0, 1.12);
+    } else if (!opened) {
       targetPosition.set(0, 0.08, 2.08);
-      targetLookAt.set(0, 0.0, 1.18);
+      targetLookAt.set(0, 0, 1.18);
+    } else if (compact) {
+      targetPosition.set(0.78, 1.28, 3.16);
+      targetLookAt.set(-0.04, -0.02, 0.05);
     } else {
-      targetPosition.set(2.1, 1.42, 2.04);
-      targetLookAt.set(0, 0.05, 0);
+      targetPosition.set(2.55, 1.36, 2.12);
+      targetLookAt.set(-0.55, 0.04, 0.03);
     }
 
     const amount = reducedMotion ? 1 : Math.min(1, dt * (opened ? 2.2 : 4.5));
@@ -79,7 +91,7 @@ function CameraManager({ opened }: { opened: boolean }) {
     camera.lookAt(currentLookAt.current);
 
     if (camera instanceof THREE.PerspectiveCamera) {
-      const targetFov = opened ? 39 : 42;
+      const targetFov = compact ? (opened ? 44 : 48) : opened ? 39 : 42;
       camera.fov += (targetFov - camera.fov) * amount;
       camera.updateProjectionMatrix();
     }
@@ -104,6 +116,9 @@ function createRadialTexture({ center, edge }: { center: string; edge: string })
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   return texture;
 }
 
@@ -150,7 +165,25 @@ function InspectionSurface() {
   );
 }
 
-function SceneContents({ opened, activePropId, onCenterClick, onSelectProp }: SceneProps) {
+function StudioLoader({
+  visible,
+  activePropId,
+  onSelectProp,
+  onStudioReady,
+}: {
+  visible: boolean;
+  activePropId: LifePropId;
+  onSelectProp: (id: LifePropId) => void;
+  onStudioReady: () => void;
+}) {
+  useEffect(() => {
+    onStudioReady();
+  }, [onStudioReady]);
+
+  return <LazyStudio visible={visible} activePropId={activePropId} onSelectProp={onSelectProp} />;
+}
+
+function SceneContents({ opened, charging, prepareStudio, activePropId, onCenterClick, onSelectProp, onStudioReady }: SceneProps) {
   return (
     <>
       <color attach="background" args={[opened ? '#03050a' : '#05060a']} />
@@ -164,8 +197,12 @@ function SceneContents({ opened, activePropId, onCenterClick, onSelectProp }: Sc
       <CameraManager opened={opened} />
       <InspectionSurface />
       <RotatableCapsule opened={opened}>
-        <Pokeball opened={opened} onCenterClick={onCenterClick} />
-        <Studio visible={opened} activePropId={activePropId} onSelectProp={onSelectProp} />
+        <Pokeball opened={opened} charging={charging} onCenterClick={onCenterClick} />
+        {prepareStudio && (
+          <Suspense fallback={null}>
+            <StudioLoader visible={opened} activePropId={activePropId} onSelectProp={onSelectProp} onStudioReady={onStudioReady} />
+          </Suspense>
+        )}
       </RotatableCapsule>
     </>
   );

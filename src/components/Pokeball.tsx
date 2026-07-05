@@ -5,6 +5,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface PokeballProps {
   opened: boolean;
+  charging: boolean;
   onCenterClick: () => void;
 }
 
@@ -12,7 +13,11 @@ const RADIUS = 1.22;
 const SHELL_PANEL_ANGLES = Array.from({ length: 10 }, (_, index) => (index / 10) * Math.PI * 2);
 const ACCENT_ANGLES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
 
-export function Pokeball({ opened, onCenterClick }: PokeballProps) {
+function setBodyCursor(cursor: 'auto' | 'pointer') {
+  document.body.style.cursor = cursor;
+}
+
+export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
   const reducedMotion = useReducedMotion();
   const lidPivotRef = useRef<THREE.Group>(null);
   const buttonRef = useRef<THREE.Group>(null);
@@ -41,8 +46,9 @@ export function Pokeball({ opened, onCenterClick }: PokeballProps) {
   );
 
   useEffect(() => {
-    if (!opened) return;
+    if (!opened && !charging) return;
     pressAmount.current = 1;
+    pulseAmount.current = 1;
     if (pressTimer.current) window.clearTimeout(pressTimer.current);
     pressTimer.current = window.setTimeout(() => {
       pressAmount.current = 0;
@@ -54,7 +60,13 @@ export function Pokeball({ opened, onCenterClick }: PokeballProps) {
         pressTimer.current = null;
       }
     };
-  }, [opened, reducedMotion]);
+  }, [charging, opened, reducedMotion]);
+
+  useEffect(() => {
+    return () => {
+      setBodyCursor('auto');
+    };
+  }, []);
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);
@@ -68,6 +80,8 @@ export function Pokeball({ opened, onCenterClick }: PokeballProps) {
     const pulse = pulseAmount.current;
     const idlePulse = opened || reducedMotion ? 0 : (Math.sin(state.clock.elapsedTime * 2.6) + 1) * 0.5;
     const idleBeat = opened || reducedMotion ? 0 : Math.pow(idlePulse, 3);
+    const chargePulse = charging && !reducedMotion ? (Math.sin(state.clock.elapsedTime * 10) + 1) * 0.5 : 0;
+    const chargeGlow = charging ? 1.15 + chargePulse * 0.85 : 0;
 
     if (lidPivotRef.current) {
       lidPivotRef.current.rotation.x = -1.92 * open;
@@ -83,14 +97,14 @@ export function Pokeball({ opened, onCenterClick }: PokeballProps) {
     }
 
     if (seamGlowRef.current && seamGlowRef.current.material instanceof THREE.MeshBasicMaterial) {
-      seamGlowRef.current.material.opacity = Math.max(0, Math.sin(open * Math.PI)) * 0.5;
+      seamGlowRef.current.material.opacity = Math.max(0, Math.sin(open * Math.PI)) * 0.5 + chargeGlow * 0.18;
     }
 
-    materials.buttonCore.emissiveIntensity = 0.18 + idleBeat * 0.72 + press * 1.2 + pulse * 1.6;
+    materials.buttonCore.emissiveIntensity = 0.18 + idleBeat * 0.72 + press * 1.2 + pulse * 1.6 + chargeGlow;
 
     if (buttonGlowRef.current && buttonGlowRef.current.material instanceof THREE.MeshBasicMaterial) {
-      buttonGlowRef.current.material.opacity = Math.min(0.82, idleBeat * 0.34 + press * 0.45 + pulse * 0.62);
-      const glowScale = 1 + idleBeat * 0.35 + pulse * 0.8;
+      buttonGlowRef.current.material.opacity = Math.min(0.9, idleBeat * 0.34 + press * 0.45 + pulse * 0.62 + chargeGlow * 0.36);
+      const glowScale = 1 + idleBeat * 0.35 + pulse * 0.8 + chargeGlow * 0.22;
       buttonGlowRef.current.scale.set(glowScale, glowScale, glowScale);
     }
   });
@@ -175,16 +189,16 @@ export function Pokeball({ opened, onCenterClick }: PokeballProps) {
         }}
         onClick={(event) => {
           event.stopPropagation();
-          document.body.style.cursor = 'auto';
+          setBodyCursor('auto');
           pressAmount.current = 1;
           pulseAmount.current = 1;
           onCenterClick();
         }}
         onPointerOver={() => {
-          document.body.style.cursor = 'pointer';
+          setBodyCursor('pointer');
         }}
         onPointerOut={() => {
-          document.body.style.cursor = 'auto';
+          setBodyCursor('auto');
         }}
       >
         <mesh material={materials.black}>

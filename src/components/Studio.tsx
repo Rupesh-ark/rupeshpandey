@@ -14,6 +14,10 @@ const EMBLEM_Y = 0.39;
 const PANEL_ANGLES = Array.from({ length: 8 }, (_, index) => (index / 8) * Math.PI * 2);
 const VENT_ANGLES = [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4];
 
+function setBodyCursor(cursor: 'auto' | 'pointer') {
+  document.body.style.cursor = cursor;
+}
+
 function drawGraduationCap(context: CanvasRenderingContext2D, color: string) {
   context.fillStyle = color;
   context.beginPath();
@@ -191,6 +195,9 @@ function createLogoTexture(prop: LifeProp) {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   texture.needsUpdate = true;
   return texture;
 }
@@ -210,6 +217,12 @@ function LogoBillboard({ prop, active, size, onClick }: { prop: LifeProp; active
   const hovering = useRef(false);
   const texture = useLogoTexture(prop);
   const { camera } = useThree();
+
+  useEffect(() => {
+    return () => {
+      setBodyCursor('auto');
+    };
+  }, []);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -234,11 +247,11 @@ function LogoBillboard({ prop, active, size, onClick }: { prop: LifeProp; active
       }}
       onPointerOver={() => {
         hovering.current = true;
-        if (onClick) document.body.style.cursor = 'pointer';
+        if (onClick) setBodyCursor('pointer');
       }}
       onPointerOut={() => {
         hovering.current = false;
-        if (onClick) document.body.style.cursor = 'auto';
+        if (onClick) setBodyCursor('auto');
       }}
     >
       <mesh>
