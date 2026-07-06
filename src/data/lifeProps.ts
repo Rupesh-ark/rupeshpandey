@@ -4,20 +4,16 @@ export interface LifeProp {
   id: LifePropId;
   label: string;
   code: string;
-  shortLabel: string;
   color: string;
   accent: string;
   readout: {
     catalog: string;
-    specimen: string;
     role: string;
     records: Array<{
       label: string;
       value: string;
-    }>;
-    links?: Array<{
-      href: string;
-      label: string;
+      detail?: string;
+      href?: string;
     }>;
   };
 }
@@ -27,23 +23,17 @@ export const LIFE_PROPS: LifeProp[] = [
     id: 'career',
     label: 'Career',
     code: 'C',
-    shortLabel: 'CAREER',
     color: '#24d8ff',
     accent: '#ff6b35',
     readout: {
-      catalog: 'R-01 · OSS',
-      specimen: 'boardgame.io',
-      role: 'Active maintainer · TypeScript game-state framework',
+      catalog: 'R-01 · EXP',
+      role: 'Open source maintenance, product engineering, data science, and internal systems',
       records: [
-        { label: 'OSS', value: 'Active maintainer of boardgame.io' },
-        { label: 'BIZOM 01', value: 'Engineer & Catalyst · CEO Office · Apr 2023 - Jul 2024' },
-        { label: 'BIZOM 02', value: 'Data Scientist · CEO Office · Jun 2022 - Dec 2022' },
-        { label: 'BIZOM 03', value: 'Software Engineer · Platform · May 2022 - Jun 2022' },
-        { label: 'BIZOM 04', value: 'SDE Intern · Analytics · Aug 2021 - May 2022' },
-      ],
-      links: [
-        { href: 'https://boardgame.io/', label: 'boardgame.io' },
-        { href: 'https://bizom.in', label: 'Bizom' },
+        { label: 'OSS', value: 'boardgame.io', detail: 'Active maintainer · TypeScript game-state framework', href: 'https://boardgame.io/' },
+        { label: '2023 - 2024', value: 'Engineer & Catalyst · CEO Office', detail: 'Bizom, Bengaluru · BNPL integration, business reviews, suggested-order ownership' },
+        { label: '2022', value: 'Data Scientist · CEO Office', detail: 'Bizom, Bengaluru · churn analysis, Catalog as a Service, DAU and efficiency prototypes' },
+        { label: '2021 - 2022', value: 'Software Engineer · Platform', detail: 'Bizom, Bengaluru · alert infrastructure, legacy rewrites, cron operations' },
+        { label: '2021 - 2022', value: 'Software Engineer Intern · Analytics', detail: 'Bizom, Bengaluru · client reports, dashboards, alerts, and report migration tooling' },
       ],
     },
   },
@@ -51,24 +41,16 @@ export const LIFE_PROPS: LifeProp[] = [
     id: 'projects',
     label: 'Projects',
     code: 'P',
-    shortLabel: 'PROJECTS',
     color: '#f0b35a',
     accent: '#d5691f',
     readout: {
       catalog: 'R-02 · PROTO',
-      specimen: 'Empires of the Skies',
-      role: 'Competitive airship board-game prototype',
+      role: 'Playable prototypes, systems, and engineering experiments',
       records: [
-        { label: '2026', value: 'Empires of the Skies · React, JavaScript, boardgame.io' },
-        { label: '2025 · RHYTHM', value: "Nimina's Rhythm · Unity, C#" },
-        { label: '2025 · SIM', value: 'Coffee Shop Simulation · Java, JavaFX' },
-        { label: '2022', value: 'Inverted List indexing · C++' },
-      ],
-      links: [
-        { href: 'https://empires-of-the-skies-tan.vercel.app/', label: 'Empires' },
-        { href: 'https://cw2-gp5.itch.io/niminas-rhythm', label: 'Nimina' },
-        { href: 'https://github.com/Saverio976/CoffeeShop', label: 'Coffee Shop' },
-        { href: 'https://github.com/Rupesh-ark/StudentManagementSystem', label: 'Indexing' },
+        { label: '2026', value: 'Empires of the Skies', detail: 'React, JavaScript, boardgame.io', href: 'https://empires-of-the-skies-tan.vercel.app/' },
+        { label: '2025 · RHYTHM', value: "Nimina's Rhythm", detail: 'Unity, C#', href: 'https://cw2-gp5.itch.io/niminas-rhythm' },
+        { label: '2025 · SIM', value: 'Coffee Shop Simulation', detail: 'Java, JavaFX', href: 'https://github.com/Saverio976/CoffeeShop' },
+        { label: '2022', value: 'Inverted List Indexing', detail: 'C++', href: 'https://github.com/Rupesh-ark/StudentManagementSystem' },
       ],
     },
   },
@@ -76,17 +58,15 @@ export const LIFE_PROPS: LifeProp[] = [
     id: 'education',
     label: 'Education',
     code: 'E',
-    shortLabel: 'EDU',
     color: '#9de07b',
     accent: '#35b864',
     readout: {
-      catalog: 'R-03 · MSC',
-      specimen: 'Edinburgh · MSc',
-      role: 'Systems, research, and durable engineering habits',
+      catalog: 'R-03 · EDU',
+      role: 'Software engineering, information science, and game-development foundations',
       records: [
-        { label: '2026', value: 'MSc Software Engineering · Heriot-Watt University' },
-        { label: '2022', value: 'B.E. Information Science · Visvesvaraya Technological University' },
-        { label: '2021', value: 'Diploma, Game Development · Backstage Pass Institute' },
+        { label: '2026', value: 'MSc Software Engineering', detail: 'Heriot-Watt University · Edinburgh, UK' },
+        { label: '2022', value: 'B.E. Information Science & Engineering', detail: 'Visvesvaraya Technological University · Bengaluru, India' },
+        { label: '2021', value: 'Diploma in Game Development', detail: 'Backstage Pass Institute · systems, gameplay, and production fundamentals' },
       ],
     },
   },
@@ -94,23 +74,16 @@ export const LIFE_PROPS: LifeProp[] = [
     id: 'contact',
     label: 'Contact',
     code: '@',
-    shortLabel: 'CONTACT',
     color: '#b68cff',
     accent: '#24d8ff',
     readout: {
       catalog: 'R-04 · LINK',
-      specimen: 'Contact relay',
-      role: 'Email, GitHub, and LinkedIn',
+      role: 'Email, GitHub, LinkedIn, and location',
       records: [
-        { label: 'EMAIL', value: 'pandeyrupesh00@gmail.com' },
-        { label: 'GITHUB', value: '@Rupesh-ark' },
-        { label: 'LINKEDIN', value: '/in/ssh-rupesh' },
+        { label: 'EMAIL', value: 'pandeyrupesh00@gmail.com', href: 'mailto:pandeyrupesh00@gmail.com' },
+        { label: 'GITHUB', value: '@Rupesh-ark', href: 'https://github.com/Rupesh-ark' },
+        { label: 'LINKEDIN', value: '/in/ssh-rupesh', href: 'https://www.linkedin.com/in/ssh-rupesh/' },
         { label: 'BASE', value: 'Edinburgh, UK' },
-      ],
-      links: [
-        { href: 'mailto:pandeyrupesh00@gmail.com', label: 'Email' },
-        { href: 'https://github.com/Rupesh-ark', label: 'GitHub' },
-        { href: 'https://www.linkedin.com/in/ssh-rupesh/', label: 'LinkedIn' },
       ],
     },
   },
@@ -118,12 +91,10 @@ export const LIFE_PROPS: LifeProp[] = [
     id: 'blogs',
     label: 'Blogs',
     code: 'B',
-    shortLabel: 'BLOGS',
     color: '#f4efe6',
     accent: '#9aa8ff',
     readout: {
       catalog: 'R-05 · LOG',
-      specimen: 'Blog archive',
       role: 'Writing slot reserved for notes, build logs, and essays',
       records: [
         { label: 'STATUS', value: 'Archive slot created' },

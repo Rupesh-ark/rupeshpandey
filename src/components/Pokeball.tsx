@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { setBodyCursor } from '../utils/bodyCursor';
 
 interface PokeballProps {
   opened: boolean;
@@ -12,10 +13,6 @@ interface PokeballProps {
 const RADIUS = 1.22;
 const SHELL_PANEL_ANGLES = Array.from({ length: 10 }, (_, index) => (index / 10) * Math.PI * 2);
 const ACCENT_ANGLES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
-
-function setBodyCursor(cursor: 'auto' | 'pointer') {
-  document.body.style.cursor = cursor;
-}
 
 export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
   const reducedMotion = useReducedMotion();
@@ -30,17 +27,17 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
 
   const materials = useMemo(
     () => ({
-      red: new THREE.MeshStandardMaterial({ color: '#a91c15', roughness: 0.42, metalness: 0.48, side: THREE.DoubleSide, transparent: true }),
-      white: new THREE.MeshStandardMaterial({ color: '#d8d1c8', roughness: 0.34, metalness: 0.58, side: THREE.DoubleSide }),
-      black: new THREE.MeshStandardMaterial({ color: '#07090c', roughness: 0.52, metalness: 0.72 }),
+      upperShell: new THREE.MeshStandardMaterial({ color: '#1e4853', roughness: 0.38, metalness: 0.62, side: THREE.DoubleSide, transparent: true }),
+      lowerShell: new THREE.MeshStandardMaterial({ color: '#756d5e', roughness: 0.34, metalness: 0.62, side: THREE.DoubleSide }),
+      black: new THREE.MeshStandardMaterial({ color: '#090d10', roughness: 0.5, metalness: 0.72 }),
       inner: new THREE.MeshStandardMaterial({ color: '#080a0d', roughness: 0.48, metalness: 0.78 }),
-      button: new THREE.MeshStandardMaterial({ color: '#9fa9b4', roughness: 0.18, metalness: 0.9 }),
-      buttonCore: new THREE.MeshStandardMaterial({ color: '#8d1115', emissive: '#3a0000', emissiveIntensity: 0.12, roughness: 0.18, metalness: 0.62 }),
-      trim: new THREE.MeshStandardMaterial({ color: '#d8d3ca', roughness: 0.22, metalness: 0.92 }),
+      button: new THREE.MeshStandardMaterial({ color: '#bdd2d4', roughness: 0.16, metalness: 0.9 }),
+      buttonCore: new THREE.MeshStandardMaterial({ color: '#1f8ea0', emissive: '#0b4c5c', emissiveIntensity: 0.22, roughness: 0.16, metalness: 0.62 }),
+      trim: new THREE.MeshStandardMaterial({ color: '#d0d8d5', roughness: 0.2, metalness: 0.92 }),
       copper: new THREE.MeshStandardMaterial({ color: '#b95625', roughness: 0.32, metalness: 0.72 }),
-      glow: new THREE.MeshBasicMaterial({ color: '#ee1515', transparent: true, opacity: 0 }),
-      buttonGlow: new THREE.MeshBasicMaterial({ color: '#ff2a2a', transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
-      lidLine: new THREE.MeshBasicMaterial({ color: '#2a0508', transparent: true, opacity: 0.42, side: THREE.DoubleSide }),
+      glow: new THREE.MeshBasicMaterial({ color: '#24d8ff', transparent: true, opacity: 0 }),
+      buttonGlow: new THREE.MeshBasicMaterial({ color: '#24d8ff', transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+      lidLine: new THREE.MeshBasicMaterial({ color: '#0f3f4d', transparent: true, opacity: 0.36, side: THREE.DoubleSide }),
     }),
     [],
   );
@@ -88,7 +85,7 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
       lidPivotRef.current.rotation.z = 0.08 * open;
     }
 
-    materials.red.opacity = 1 - open * 0.28;
+    materials.upperShell.opacity = 1 - open * 0.28;
 
     if (buttonRef.current) {
       buttonRef.current.position.z = RADIUS + 0.045 - 0.065 * press;
@@ -112,7 +109,7 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
   return (
     <group position={[0, 0, 0]}>
       <group ref={lidPivotRef} position={[0, 0, -RADIUS]}>
-        <mesh position={[0, 0, RADIUS]} material={materials.red}>
+        <mesh position={[0, 0, RADIUS]} material={materials.upperShell}>
           <sphereGeometry args={[RADIUS, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2]} />
         </mesh>
         <group position={[0, 0, RADIUS]}>
@@ -145,7 +142,7 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
         </mesh>
       </group>
 
-      <mesh material={materials.white}>
+      <mesh material={materials.lowerShell}>
         <sphereGeometry args={[RADIUS, 64, 32, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
       </mesh>
       <group>

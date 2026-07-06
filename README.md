@@ -1,15 +1,8 @@
 # Rupesh Pandey Portfolio
 
-An interactive 3D portfolio built around an opened Pokeball artifact. The Pokeball reveals a compact archive chamber where life/work categories orbit as glowing specimen logos and the selected category appears inside the central glass cylinder.
+Interactive 3D portfolio built with a Pokeball-style archive artifact. Opening the archive reveals a compact chamber with orbiting category logos, a side navigation spine, and a specimen plate for the selected section.
 
-## Current Concept
-
-- Centerpiece: an open Pokeball with a mechanical interior chamber.
-- Navigation: a slim instrument-spine nav for Career, Projects, Education, Contact, and Blogs.
-- Content: a compact specimen plate that changes with the selected chamber logo.
-- Interaction: click the Pokeball center to open/close, scroll to cycle categories, click orbit logos to select them.
-
-## Tech Stack
+## Stack
 
 - Vite
 - React 19
@@ -17,35 +10,39 @@ An interactive 3D portfolio built around an opened Pokeball artifact. The Pokeba
 - Three.js
 - React Three Fiber
 
-## Getting Started
+## Development
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
-Vite runs without auto-opening the browser. Open the local URL printed in the terminal.
+Vite does not auto-open the browser. Use the local URL printed by the dev server.
 
 ## Scripts
 
 ```bash
-pnpm run dev        # Start local Vite dev server
-pnpm run typecheck  # Run TypeScript checks
-pnpm run build      # Typecheck and create production build
-pnpm run preview    # Preview production build locally
+pnpm run dev        # Start Vite
+pnpm run typecheck  # Run TypeScript without emitting files
+pnpm run build      # Typecheck and create the production build
+pnpm run preview    # Preview the production build locally
 ```
 
 ## Project Structure
 
-- `src/App.tsx` controls open/closed state, active archive category, wheel cycling, nav, and specimen plate.
-- `src/components/Scene.tsx` owns the React Three Fiber canvas, camera movement, lighting, and hologram inspection field.
-- `src/components/Pokeball.tsx` builds and animates the Pokeball shell and center button.
-- `src/components/Studio.tsx` builds the chamber, platform, orbit logos, and generated logo textures.
-- `src/data/lifeProps.ts` is the source of truth for portfolio categories and specimen content.
+- `src/App.tsx` wires archive state, selected category, audio pulse state, and top-level UI.
+- `src/components/Scene.tsx` owns the React Three Fiber canvas and composes the scene modules.
+- `src/components/scene/` contains camera, capsule rotation, inspection surface, console controls, and scene texture helpers.
+- `src/components/Pokeball.tsx` builds and animates the outer artifact.
+- `src/components/Studio.tsx` composes the chamber modules.
+- `src/components/studio/` contains logo textures, orbit logos, pulse cracks, floor, and chamber pieces.
+- `src/components/ThemeNav.tsx` and `src/components/SpecimenPlate.tsx` render the DOM overlay UI.
+- `src/data/lifeProps.ts` is the source of truth for portfolio categories and readout content.
+- `src/styles/` contains the split CSS modules imported by `src/index.css`.
 
 ## Verification
 
-Before handing off changes, run:
+Before handing off code changes, run:
 
 ```bash
 pnpm run typecheck
@@ -54,6 +51,6 @@ pnpm run build
 
 ## Notes
 
-- Generated output in `dist/` and dependencies in `node_modules/` are ignored.
-- Logo graphics are currently generated with canvas textures in `Studio.tsx`.
-- The design direction avoids generic floating cards/HUD panels in favor of a physical artifact, instrument spine, and specimen plate.
+- Use `pnpm`; the lockfile is `pnpm-lock.yaml`.
+- Generated output in `dist/` and dependencies in `node_modules/` should not be committed.
+- Audio pulse playback uses `public/music/route101.mp3`.
