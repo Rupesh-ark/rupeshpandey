@@ -1,19 +1,85 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type WheelEvent } from 'react';
 import type { LifeProp } from '../data/lifeProps';
 
-export function SpecimenPlate({ activeProp }: { activeProp: LifeProp }) {
+const MOBILE_LAYOUT_QUERY = '(max-width: 720px)';
+
+export function SpecimenPlate({ activeProp, onScrollActivity }: { activeProp: LifeProp; onScrollActivity: () => void }) {
+  const plateRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const showScrollCueRef = useRef(false);
+  const scrollCueFrameRef = useRef<number | null>(null);
   const [showScrollCue, setShowScrollCue] = useState(false);
   const readout = activeProp.readout;
   const plateStyle = { '--plate-accent': activeProp.color, '--plate-secondary': activeProp.accent } as CSSProperties;
 
-  const syncScrollCue = useCallback(() => {
+  // Desktop: measure the section's natural height and set explicit pixels so
+  // the CSS height transition can animate between sections (height: auto
+  // changes don't fire transitions). Mobile keeps the fixed-height sheet.
+  const syncPlateHeight = useCallback(() => {
+    const plate = plateRef.current;
+    if (!plate) return;
+
+    if (window.matchMedia(MOBILE_LAYOUT_QUERY).matches) {
+      plate.style.height = '';
+      return;
+    }
+
+    // FLIP: measure the natural (auto, min/max-clamped) height, then animate
+    // from the current height to it.
+    const startHeight = plate.offsetHeight;
+    plate.style.height = 'auto';
+    const targetHeight = plate.offsetHeight;
+    if (targetHeight === startHeight) {
+      plate.style.height = `${targetHeight}px`;
+      return;
+    }
+    plate.style.height = `${startHeight}px`;
+    void plate.offsetHeight; // commit the start value before transitioning
+    plate.style.height = `${targetHeight}px`;
+  }, []);
+
+  useLayoutEffect(() => {
+    syncPlateHeight();
+    window.addEventListener('resize', syncPlateHeight);
+    return () => window.removeEventListener('resize', syncPlateHeight);
+  }, [activeProp.id, syncPlateHeight]);
+
+  const updateScrollCue = useCallback(() => {
     const scrollPanel = scrollRef.current;
     if (!scrollPanel) return;
 
     const overflows = scrollPanel.scrollHeight > scrollPanel.clientHeight + 2;
     const hasMoreBelow = scrollPanel.scrollTop + scrollPanel.clientHeight < scrollPanel.scrollHeight - 2;
-    setShowScrollCue(overflows && hasMoreBelow);
+    const nextShowScrollCue = overflows && hasMoreBelow;
+    if (showScrollCueRef.current === nextShowScrollCue) return;
+
+    showScrollCueRef.current = nextShowScrollCue;
+    setShowScrollCue(nextShowScrollCue);
+  }, []);
+
+  const syncScrollCue = useCallback(() => {
+    if (scrollCueFrameRef.current !== null) return;
+
+    scrollCueFrameRef.current = window.requestAnimationFrame(() => {
+      scrollCueFrameRef.current = null;
+      updateScrollCue();
+    });
+  }, [updateScrollCue]);
+
+  const handleScroll = useCallback(() => {
+    onScrollActivity();
+    syncScrollCue();
+  }, [onScrollActivity, syncScrollCue]);
+
+  const handleWheelCapture = useCallback((event: WheelEvent<HTMLElement>) => {
+    event.stopPropagation();
+    onScrollActivity();
+  }, [onScrollActivity]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollCueFrameRef.current !== null) window.cancelAnimationFrame(scrollCueFrameRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -21,7 +87,7 @@ export function SpecimenPlate({ activeProp }: { activeProp: LifeProp }) {
     if (!scrollPanel) return;
 
     scrollPanel.scrollTop = 0;
-    syncScrollCue();
+    updateScrollCue();
 
     const frame = window.requestAnimationFrame(syncScrollCue);
     const resizeObserver = new ResizeObserver(syncScrollCue);
@@ -30,10 +96,14 @@ export function SpecimenPlate({ activeProp }: { activeProp: LifeProp }) {
 
     return () => {
       window.cancelAnimationFrame(frame);
+      if (scrollCueFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollCueFrameRef.current);
+        scrollCueFrameRef.current = null;
+      }
       resizeObserver.disconnect();
       window.removeEventListener('resize', syncScrollCue);
     };
-  }, [activeProp.id, syncScrollCue]);
+  }, [activeProp.id, syncScrollCue, updateScrollCue]);
 
   const records = (
     <dl key={activeProp.id} className="specimen-plate__notes">
@@ -70,13 +140,14 @@ export function SpecimenPlate({ activeProp }: { activeProp: LifeProp }) {
 
   return (
     <aside
+      ref={plateRef}
       className={`specimen-plate${readout.portrait ? ' specimen-plate--profile' : ''}`}
       style={plateStyle}
       aria-label={`${activeProp.label} specimen`}
       aria-live="polite"
-      onWheelCapture={(event) => event.stopPropagation()}
+      onWheelCapture={handleWheelCapture}
     >
-      <div ref={scrollRef} className="specimen-plate__scroll" onScroll={syncScrollCue}>
+      <div ref={scrollRef} className="specimen-plate__scroll" onScroll={handleScroll}>
         <p className="specimen-plate__catalog">
           <span className="specimen-plate__tick" aria-hidden="true" />
           <span>{readout.catalog}</span>

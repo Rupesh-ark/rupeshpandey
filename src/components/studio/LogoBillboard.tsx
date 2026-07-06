@@ -10,12 +10,14 @@ export function LogoBillboard({
   active,
   size,
   reducedMotion = false,
+  animatedRef,
   onClick,
 }: {
   prop: LifeProp;
   active: boolean;
   size: number;
   reducedMotion?: boolean;
+  animatedRef?: { current: boolean };
   onClick?: () => void;
 }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -30,6 +32,7 @@ export function LogoBillboard({
   }, []);
 
   useFrame((_, delta) => {
+    if (animatedRef && !animatedRef.current) return;
     if (!groupRef.current) return;
     groupRef.current.quaternion.copy(camera.quaternion);
     const targetScale = !reducedMotion && onClick && hovering.current ? 1.14 : 1;
@@ -60,12 +63,12 @@ export function LogoBillboard({
       }}
     >
       <mesh>
-        <circleGeometry args={[size, 80]} />
+        <circleGeometry args={[size, 48]} />
         <meshBasicMaterial map={texture} transparent toneMapped={false} depthWrite={false} />
       </mesh>
       <mesh position={[0, 0, -0.006]}>
-        <ringGeometry args={[size * 1.08, size * 1.2, 80]} />
-        <meshBasicMaterial color={active ? prop.color : '#43515e'} transparent opacity={active ? 0.78 : 0.34} side={THREE.DoubleSide} depthWrite={false} />
+        <ringGeometry args={[size * 1.08, size * 1.2, 48]} />
+        <meshBasicMaterial color={active ? '#c9a05a' : '#5a4d3c'} transparent opacity={active ? 0.82 : 0.34} side={THREE.DoubleSide} forceSinglePass depthWrite={false} />
       </mesh>
     </group>
   );

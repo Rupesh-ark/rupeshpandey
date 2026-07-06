@@ -1,15 +1,17 @@
 :root {
-  --ink: #0e0f13;
-  --ink-2: #171a22;
-  --paper: #f4efe6;
-  --paper-2: #e7e2d6;
-  --muted: #8d8576;
-  --line: rgba(244, 239, 230, 0.18);
-  --line-dark: rgba(23, 26, 34, 0.16);
-  --accent: #24d8ff;
-  --moss: #6f8259;
-  --ochre: #c8954a;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  --ink: #171009;
+  --ink-2: #241a10;
+  --paper: #eadfc4;
+  --paper-2: #dccfae;
+  --muted: #9a8b6d;
+  --line: rgba(234, 223, 196, 0.2);
+  --line-dark: rgba(43, 33, 24, 0.25);
+  --accent: #a32e22;
+  --bronze: #a07c3e;
+  --bronze-dark: #6b5527;
+  --moss: #6f8e5a;
+  --ochre: #d9a441;
+  --shadow: 0 24px 80px rgba(20, 10, 4, 0.5);
 }
 
 * {
@@ -22,7 +24,8 @@ html {
 
 body {
   margin: 0;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 17px;
   color: var(--paper);
   background: var(--ink);
   line-height: 1.55;
@@ -56,4 +59,24 @@ a {
   position: fixed;
   inset: 0;
   z-index: 0;
+}
+
+.scene-perf {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 2px 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(234, 223, 196, 0.24);
+  background: rgba(12, 7, 3, 0.78);
+  color: rgba(234, 223, 196, 0.82);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-transform: uppercase;
 }

@@ -2,6 +2,8 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { getNextLifePropId, type LifePropId } from '../data/lifeProps';
 
 const SPECIMEN_PLATE_SELECTOR = '.specimen-plate';
+const MIN_WHEEL_DELTA = 8;
+const WHEEL_GESTURE_IDLE_MS = 260;
 
 function isWheelInsideSpecimenPlate(event: WheelEvent) {
   const target = event.target;
@@ -23,23 +25,37 @@ export function useWheelLifePropNavigation(
   enabled: boolean,
   setActivePropId: Dispatch<SetStateAction<LifePropId>>,
 ) {
-  const lastWheelAt = useRef(0);
+  const wheelGestureLocked = useRef(false);
+  const wheelGestureTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
 
     function handleWheel(event: WheelEvent) {
       if (isWheelInsideSpecimenPlate(event)) return;
-      if (Math.abs(event.deltaY) < 8) return;
-      const now = performance.now();
-      if (now - lastWheelAt.current < 420) return;
-
+      if (Math.abs(event.deltaY) < MIN_WHEEL_DELTA) return;
       event.preventDefault();
-      lastWheelAt.current = now;
+
+      if (wheelGestureTimer.current) window.clearTimeout(wheelGestureTimer.current);
+      wheelGestureTimer.current = window.setTimeout(() => {
+        wheelGestureLocked.current = false;
+        wheelGestureTimer.current = null;
+      }, WHEEL_GESTURE_IDLE_MS);
+
+      if (wheelGestureLocked.current) return;
+
+      wheelGestureLocked.current = true;
       setActivePropId((current) => getNextLifePropId(current, event.deltaY > 0 ? 1 : -1));
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      if (wheelGestureTimer.current) {
+        window.clearTimeout(wheelGestureTimer.current);
+        wheelGestureTimer.current = null;
+      }
+      wheelGestureLocked.current = false;
+    };
   }, [enabled, setActivePropId]);
 }

@@ -5,7 +5,6 @@ const MUSIC_VOLUME = 0.42;
 
 export function useArchiveAudio(opened: boolean) {
   const [musicEnabled, setMusicEnabled] = useState(false);
-  const [audioEnergy, setAudioEnergy] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -17,7 +16,7 @@ export function useArchiveAudio(opened: boolean) {
     if (!audioRef.current) {
       const audio = new Audio(MUSIC_SRC);
       audio.loop = true;
-      audio.preload = 'auto';
+      audio.preload = 'none';
       audio.volume = MUSIC_VOLUME;
       audioRef.current = audio;
     }
@@ -53,7 +52,6 @@ export function useArchiveAudio(opened: boolean) {
     if (musicEnabled) {
       audioRef.current?.pause();
       audioEnergyRef.current = 0;
-      setAudioEnergy(0);
       setMusicEnabled(false);
       return;
     }
@@ -67,7 +65,6 @@ export function useArchiveAudio(opened: boolean) {
       .catch(() => {
         audio.pause();
         audioEnergyRef.current = 0;
-        setAudioEnergy(0);
         setMusicEnabled(false);
       });
   }, [ensureAudioGraph, getAudioElement, musicEnabled]);
@@ -77,21 +74,18 @@ export function useArchiveAudio(opened: boolean) {
 
     audioRef.current?.pause();
     audioEnergyRef.current = 0;
-    setAudioEnergy(0);
     setMusicEnabled(false);
   }, [musicEnabled, opened]);
 
   useEffect(() => {
     if (!musicEnabled) {
       audioEnergyRef.current = 0;
-      setAudioEnergy(0);
       return;
     }
 
     let animationFrame = 0;
-    let lastCommit = 0;
 
-    function updateEnergy(now: number) {
+    function updateEnergy() {
       const analyser = analyserRef.current;
       const data = audioDataRef.current;
 
@@ -108,11 +102,6 @@ export function useArchiveAudio(opened: boolean) {
         const normalized = sum / (bins * 255);
         const targetEnergy = Math.min(1, Math.pow(normalized * 2.05, 0.82));
         audioEnergyRef.current += (targetEnergy - audioEnergyRef.current) * 0.34;
-
-        if (now - lastCommit > 66) {
-          setAudioEnergy(audioEnergyRef.current);
-          lastCommit = now;
-        }
       }
 
       animationFrame = window.requestAnimationFrame(updateEnergy);
@@ -129,5 +118,5 @@ export function useArchiveAudio(opened: boolean) {
     };
   }, []);
 
-  return { musicEnabled, audioEnergy, toggleMusic: handleToggleMusic };
+  return { musicEnabled, audioEnergyRef, toggleMusic: handleToggleMusic };
 }

@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rupesh Pandey - CV</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: #171717;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 9.35px;
+        line-height: 1.27;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      ul {
+        margin: 0;
+      }
+
+      ul {
+        padding-left: 13px;
+      }
+
+      li + li {
+        margin-top: 1.5px;
+      }
+
+      .header {
+        display: grid;
+        gap: 3px;
+        padding-bottom: 7px;
+        border-bottom: 1.5px solid #1f2933;
+      }
+
+      .name-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      h1 {
+        font-size: 19px;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .headline {
+        font-size: 10.5px;
+        font-weight: 700;
+      }
+
+      .contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        color: #333;
+        font-size: 8.7px;
+      }
+
+      .summary {
+        margin-top: 7px;
+        font-size: 9.6px;
+      }
+
+      .skills {
+        margin-top: 5px;
+        font-size: 9px;
+      }
+
+      .section {
+        margin-top: 8px;
+        break-inside: avoid;
+      }
+
+      .section h2 {
+        margin-bottom: 4px;
+        padding-bottom: 2px;
+        border-bottom: 0.7px solid #888;
+        color: #111;
+        font-size: 10.2px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .item {
+        margin-top: 5px;
+        break-inside: avoid;
+      }
+
+      .item:first-of-type {
+        margin-top: 0;
+      }
+
+      .item-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        font-weight: 700;
+      }
+
+      .item-title {
+        font-size: 9.8px;
+      }
+
+      .item-meta {
+        flex: none;
+        color: #444;
+        font-size: 8.4px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .item-sub {
+        margin-top: 1px;
+        color: #333;
+        font-size: 8.8px;
+        font-weight: 700;
+      }
+
+      .compact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px 14px;
+      }
+
+      .project-title {
+        font-weight: 700;
+      }
+
+      .certs {
+        column-count: 2;
+        column-gap: 18px;
+        font-size: 8.7px;
+      }
+
+      .certs li {
+        break-inside: avoid;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="name-row">
+        <h1>Rupesh Pandey</h1>
+        <p class="headline">Product Engineer | MSc Software Engineering | Open Source Maintainer</p>
+      </div>
+      <p class="contact">
+        <span>Edinburgh EH14 1XB</span>
+        <span>+44 7762 416262</span>
+        <span><a href="mailto:pandeyrupesh00@gmail.com">pandeyrupesh00@gmail.com</a></span>
+        <span><a href="https://rupeshpandey.dev">rupeshpandey.dev</a></span>
+        <span><a href="https://www.linkedin.com/in/ssh-rupesh/">linkedin.com/in/ssh-rupesh</a></span>
+        <span><a href="https://github.com/Rupesh-ark">github.com/Rupesh-ark</a></span>
+      </p>
+    </header>
+
+    <p class="summary">
+      MSc Software Engineering graduate from Heriot-Watt University and product engineer with experience across
+      open source maintenance, product engineering, data analysis, internal tools, and game systems. Strong at
+      turning ambiguous requirements into working systems, communicating across functions, and building useful
+      prototypes with a pragmatic engineering approach.
+    </p>
+    <p class="skills">
+      <strong>Key skills:</strong> TypeScript, React, React Three Fiber, Node.js, JavaScript, Python, Java, C++,
+      PHP, MVC architecture, boardgame.io, data analysis, prototyping, business reviews, cross-functional delivery.
+    </p>
+
+    <section class="section">
+      <h2>Experience</h2>
+
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Open Source Maintainer - boardgame.io</p>
+          <p class="item-meta">May 2024 - Present</p>
+        </div>
+        <p class="item-sub">Remote | TypeScript game-state framework</p>
+        <ul>
+          <li>Maintain an open source TypeScript framework used to model deterministic, turn-based game state.</li>
+          <li>Review issues, pull requests, documentation gaps, and framework behavior with attention to API stability.</li>
+          <li>Apply maintainer experience directly in Empires of the Skies, a multiplayer strategy game built on boardgame.io.</li>
+        </ul>
+      </article>
+
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Engineer &amp; Catalyst - CEO's Office</p>
+          <p class="item-meta">Apr 2023 - Jul 2024</p>
+        </div>
+        <p class="item-sub">Bizom (Mobisy Technologies Ltd), Bengaluru, India</p>
+        <ul>
+          <li>Integrated BNPL with Bizom's SFA, improving workflow efficiency and user experience.</li>
+          <li>Hosted weekly company-wide business reviews and town halls to improve cross-functional visibility.</li>
+          <li>Owned and promoted the suggested-order feature, improving ordering accuracy and customer outcomes.</li>
+        </ul>
+      </article>
+
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Data Scientist - CEO's Office</p>
+          <p class="item-meta">Jun 2022 - Dec 2022</p>
+        </div>
+        <p class="item-sub">Bizom (Mobisy Technologies Ltd), Bengaluru, India</p>
+        <ul>
+          <li>Developed churn analysis tooling to support customer retention strategy and product decisions.</li>
+          <li>Built CEO Office experiments including Catalog as a Service and DAU-focused prototypes.</li>
+          <li>Improved operational efficiency through practical prototypes and analysis-backed recommendations.</li>
+        </ul>
+      </article>
+
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Software Engineer - Platform</p>
+          <p class="item-meta">Aug 2021 - Jun 2022</p>
+        </div>
+        <p class="item-sub">Bizom (Mobisy Technologies Ltd), Bengaluru, India</p>
+        <ul>
+          <li>Owned alert infrastructure and resolved high-priority platform tickets.</li>
+          <li>Maintained and rewrote legacy code to improve runtime and reliability.</li>
+          <li>Reused alert technology to support cron operations and internal system workflows.</li>
+        </ul>
+      </article>
+
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Software Engineer Intern - Analytics</p>
+          <p class="item-meta">Aug 2021 - May 2022</p>
+        </div>
+        <p class="item-sub">Bizom (Mobisy Technologies Ltd), Bengaluru, India</p>
+        <ul>
+          <li>Generated client reports, dashboards, and alerts for data-driven decision-making.</li>
+          <li>Built and maintained migration tooling for legacy platform reports.</li>
+          <li>Contributed to analytics reliability through report rewrites and internal tooling support.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Education</h2>
+      <div class="compact-grid">
+        <article class="item">
+          <div class="item-head">
+            <p class="item-title">MSc Software Engineering</p>
+            <p class="item-meta">Jun 2026</p>
+          </div>
+          <p class="item-sub">Heriot-Watt University, Edinburgh, UK</p>
+        </article>
+        <article class="item">
+          <div class="item-head">
+            <p class="item-title">B.E. Information Science &amp; Engineering</p>
+            <p class="item-meta">Jan 2022</p>
+          </div>
+          <p class="item-sub">Visvesvaraya Technological University, Bengaluru, India</p>
+        </article>
+        <article class="item">
+          <div class="item-head">
+            <p class="item-title">Diploma in Game Development</p>
+            <p class="item-meta">Jan 2021</p>
+          </div>
+          <p class="item-sub">Backstage Pass Institute of Gaming</p>
+        </article>
+        <article class="item">
+          <div class="item-head">
+            <p class="item-title">High School, PCM + CS</p>
+            <p class="item-meta">Jan 2016</p>
+          </div>
+          <p class="item-sub">Delhi Public School (DPS)</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Projects</h2>
+      <article class="item">
+        <p class="project-title">Empires of the Skies - Digital strategy board game and AI opponent | TypeScript, React, Node.js, Python, boardgame.io</p>
+        <ul>
+          <li>Architected a full-stack multiplayer web application by migrating a legacy codebase into a three-package monorepo.</li>
+          <li>Implemented a 6-player strategy engine with server-authoritative state, 69 move types, and a 7-phase round structure.</li>
+          <li>Built a hybrid AI using 26 heuristic evaluators with Monte Carlo Tree Search, averaging 25.6 ms decision time.</li>
+          <li>Created a CMA-ES parameter tuning pipeline in Python, optimizing 177 parameters for a 15x AI quality improvement.</li>
+        </ul>
+      </article>
+      <article class="item">
+        <p class="project-title">Nimina's Rhythm - Team rhythm game | Unity, C#</p>
+        <ul>
+          <li>Designed a conductor system to sync jumps, dashes, attacks, platforms, hazards, and enemies to track BPM.</li>
+          <li>Implemented precise input-validation windows for beat-based interactions.</li>
+        </ul>
+      </article>
+      <article class="item">
+        <p class="project-title">Coffee Shop Simulation | Java, JavaFX, Multithreading, Design Patterns</p>
+        <ul>
+          <li>Built an MVC simulation with model classes, JavaFX UI, Observer updates, and Singleton file logging.</li>
+        </ul>
+      </article>
+      <article class="item">
+        <p class="project-title">Student Management System | C++, Inverted List Indexing</p>
+        <ul>
+          <li>Engineered a modular multi-file codebase and implemented an inverted index for fast student record searches.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Additional UK Experience</h2>
+      <article class="item">
+        <div class="item-head">
+          <p class="item-title">Front of House / Hospitality</p>
+          <p class="item-meta">Sept 2024 - Present</p>
+        </div>
+        <p class="item-sub">Edinburgh, UK</p>
+        <ul>
+          <li>Managed high-volume customer interactions in a fast-paced environment while completing a full-time Master's degree.</li>
+          <li>Demonstrated cross-cultural communication, conflict resolution, adaptability, and UK workplace experience.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2>Certificates</h2>
+      <ul class="certs">
+        <li>Microservice Architectures (Coursera), Jan 2024 - VSJWQFSXG3KW</li>
+        <li>Building HTTP APIs with Spring (Coursera), Dec 2023 - GSR9V996RVN4</li>
+        <li>Advanced SQL (HackerRank), Jan 2024 - 46ef42734ce9</li>
+        <li>Intermediate SQL (HackerRank), Dec 2023 - 1a8054aec384</li>
+        <li>C Programming, Intermediate (HackerRank), Sep 2020 - f0a51d468d78</li>
+        <li>Learning How to Learn (Coursera), Nov 2020 - RDNWL4NF9WCZ</li>
+      </ul>
+    </section>
+  </body>
+</html>
