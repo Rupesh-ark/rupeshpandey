@@ -11,17 +11,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 9
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -32,8 +32,15 @@ jobs:
         env:
           VITE_BUILD_HASH: ${{ github.sha }}
 
+      # Caddy serves the .br sidecars via `file_server { precompressed br }`;
+      # dynamic zstd/gzip covers clients without brotli support.
+      - name: Precompress assets with brotli
+        run: |
+          sudo apt-get install -y brotli > /dev/null 2>&1 || true
+          find dist -type f \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.svg' -o -name '*.txt' \) -exec brotli -k -q 11 {} +
+
       - name: Deploy dist/ to VPS
-        uses: appleboy/scp-action@v0.1.7
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -45,7 +52,7 @@ jobs:
           overwrite: true
 
       - name: Restart Caddy
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
