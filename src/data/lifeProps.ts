@@ -31,15 +31,16 @@ export const LIFE_PROPS: LifeProp[] = [
     accent: '#d9a441',
     readout: {
       catalog: 'R-00 · ID',
-      role: 'Product engineer. MSc graduate. Builder of systems, scenes, and useful weird ideas.',
+      role: 'Product engineer with 3 years of experience building web systems, interactive scenes, and practical tools. Currently building in open source.',
       portrait: {
         src: '/images/Rupesh_Pandey-480.webp',
         alt: 'Rupesh Pandey',
       },
       records: [
         { label: 'ROLE', value: 'Product engineer' },
+        { label: 'EXPERIENCE', value: '3 years', detail: 'Production web apps and practical tools' },
+        { label: 'OSS', value: 'Open-source developer' },
         { label: 'STUDY', value: 'MSc Software Engineering', detail: 'Heriot-Watt University · graduated 2026' },
-        { label: 'FOCUS', value: 'Systems, scenes, and practical tools' },
         { label: 'BASE', value: 'Edinburgh, UK' },
       ],
     },

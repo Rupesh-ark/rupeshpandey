@@ -167,7 +167,7 @@
 
 .specimen-plate__profile {
   display: grid;
-  grid-template-columns: minmax(7.8rem, 0.36fr) minmax(0, 1fr);
+  grid-template-columns: minmax(9rem, 0.42fr) minmax(0, 1fr);
   gap: clamp(1rem, 2vw, 1.45rem);
   align-items: center;
 }
@@ -175,7 +175,7 @@
 .specimen-plate__portrait {
   position: relative;
   align-self: center;
-  width: min(11.4rem, 100%);
+  width: min(13.4rem, 100%);
   margin: 0;
   aspect-ratio: 1;
 }
@@ -394,13 +394,13 @@
   }
 
   .specimen-plate__profile {
-    grid-template-columns: minmax(5.2rem, 0.32fr) minmax(0, 1fr);
+    grid-template-columns: minmax(5.8rem, 0.36fr) minmax(0, 1fr);
     gap: 0.72rem;
     align-items: start;
   }
 
   .specimen-plate__portrait {
-    width: min(7.2rem, 100%);
+    width: min(7.8rem, 100%);
   }
 
   .specimen-plate__notes {
@@ -481,7 +481,7 @@
   }
 
   .specimen-plate__portrait {
-    width: 6.8rem;
+    width: 7.4rem;
   }
 
   .specimen-plate__note {
