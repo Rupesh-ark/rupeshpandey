@@ -112,29 +112,36 @@ function drawContactMark(context: CanvasRenderingContext2D, prop: LifeProp) {
   context.fillText('in', 176, 188);
 }
 
-function drawBlogMark(context: CanvasRenderingContext2D, prop: LifeProp) {
+function drawProfileMark(context: CanvasRenderingContext2D, prop: LifeProp) {
   context.strokeStyle = prop.accent;
   context.fillStyle = prop.color;
-  context.lineWidth = 5;
+  context.lineWidth = 6;
 
   context.beginPath();
-  context.moveTo(82, 68);
-  context.lineTo(154, 68);
-  context.lineTo(188, 102);
-  context.lineTo(188, 174);
-  context.lineTo(82, 174);
+  context.arc(128, 96, 30, 0, Math.PI * 2);
+  context.fill();
+
+  context.beginPath();
+  context.moveTo(76, 176);
+  context.quadraticCurveTo(128, 118, 180, 176);
+  context.lineTo(180, 190);
+  context.lineTo(76, 190);
   context.closePath();
-  context.stroke();
+  context.fill();
 
+  context.globalAlpha = 0.72;
   context.beginPath();
-  context.moveTo(154, 68);
-  context.lineTo(154, 104);
-  context.lineTo(188, 104);
+  context.arc(128, 128, 70, 0.14 * Math.PI, 1.86 * Math.PI);
   context.stroke();
 
-  [112, 132, 152].forEach((y, index) => {
-    context.globalAlpha = 0.9 - index * 0.18;
-    context.fillRect(104, y, 62 + index * 10, 6);
+  context.strokeStyle = prop.color;
+  context.globalAlpha = 0.5;
+  [82, 174].forEach((x) => {
+    context.beginPath();
+    context.moveTo(x, 74);
+    context.lineTo(x + (x < 128 ? -22 : 22), 74);
+    context.lineTo(x + (x < 128 ? -22 : 22), 96);
+    context.stroke();
   });
   context.globalAlpha = 1;
 }
@@ -168,7 +175,7 @@ function createLogoTexture(prop: LifeProp) {
     if (prop.id === 'projects') drawAirship(context, prop.color);
     if (prop.id === 'education') drawGraduationCap(context, prop.color);
     if (prop.id === 'contact') drawContactMark(context, prop);
-    if (prop.id === 'blogs') drawBlogMark(context, prop);
+    if (prop.id === 'profile') drawProfileMark(context, prop);
 
     context.strokeStyle = prop.accent;
     context.globalAlpha = 0.5;

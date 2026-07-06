@@ -1,119 +1,89 @@
-.specimen-plate,
-.specimen-plate__beam {
+.specimen-plate {
   --plate-accent: #24d8ff;
   --plate-secondary: #f0b35a;
   --plate-left: clamp(2rem, 4vw, 4rem);
   --plate-top: clamp(4.5rem, 10vh, 6.5rem);
-  --plate-width: clamp(31rem, 41vw, 39rem);
-  --plate-height: clamp(23rem, 48vh, 32rem);
-}
-
-.specimen-plate__beam {
-  position: fixed;
-  top: var(--plate-top);
-  left: calc(var(--plate-left) + var(--plate-width) - 0.7rem);
-  z-index: 20;
-  width: clamp(13rem, 20vw, 26rem);
-  height: var(--plate-height);
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 78%), color-mix(in srgb, var(--plate-accent), transparent 93%) 42%, transparent 88%),
-    repeating-linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 96%) 0 1px, transparent 1px 2.6rem),
-    linear-gradient(180deg, transparent, color-mix(in srgb, var(--plate-secondary), transparent 92%), transparent);
-  clip-path: polygon(0 4%, 100% 78%, 100% 92%, 0 96%);
-  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--plate-accent), transparent 40%));
-  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 62%, transparent);
-  mix-blend-mode: screen;
-  opacity: 0.28;
-  pointer-events: none;
-  animation: projection-beam 2.8s ease-in-out infinite;
-}
-
-.specimen-plate__beam::before,
-.specimen-plate__beam::after {
-  position: absolute;
-  pointer-events: none;
-  content: '';
-}
-
-.specimen-plate__beam::before {
-  inset: 82% 0 12%;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--plate-secondary), transparent 64%), color-mix(in srgb, var(--plate-accent), transparent 86%), transparent);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--plate-accent), transparent 52%);
-}
-
-.specimen-plate__beam::after {
-  top: 85%;
-  right: -0.18rem;
-  width: 0.48rem;
-  height: 0.48rem;
-  background: var(--plate-accent);
-  border-radius: 50%;
-  box-shadow: 0 0 18px var(--plate-accent), 0 0 36px color-mix(in srgb, var(--plate-secondary), transparent 26%);
-  transform: translateY(-50%);
-}
-
-@keyframes projection-beam {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-
-  50% {
-    opacity: 0.34;
-  }
-}
-
-.specimen-plate {
+  --plate-width: clamp(29rem, 38vw, 36rem);
+  --plate-height: clamp(21rem, 44vh, 28rem);
+  --plate-cut: clamp(2.35rem, 4vw, 3.4rem);
+  --plate-rim: 3px;
+  --plate-pad-top: clamp(1.25rem, 2.5vh, 1.7rem);
+  --plate-pad-right: calc(var(--plate-cut) + 0.92rem);
+  --plate-pad-bottom: clamp(1.25rem, 2.4vh, 1.6rem);
+  --plate-pad-left: calc(var(--plate-cut) + 1.05rem);
+  --plate-hex: polygon(
+    var(--plate-cut) 0,
+    calc(100% - var(--plate-cut)) 0,
+    100% 50%,
+    calc(100% - var(--plate-cut)) 100%,
+    var(--plate-cut) 100%,
+    0 50%
+  );
   position: fixed;
   top: var(--plate-top);
   left: var(--plate-left);
   z-index: 30;
   width: var(--plate-width);
   height: var(--plate-height);
-  padding: 1.15rem 1.35rem 1.25rem 1.7rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  scrollbar-color: color-mix(in srgb, var(--plate-accent), transparent 42%) transparent;
-  scrollbar-width: thin;
-  touch-action: pan-y;
+  overflow: hidden;
   color: var(--paper);
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 93%) 0 1px, transparent 1px 100%),
-    linear-gradient(180deg, rgba(3, 6, 9, 0.48), rgba(3, 5, 8, 0.18)),
-    radial-gradient(ellipse at 100% 50%, color-mix(in srgb, var(--plate-accent), transparent 90%), transparent 62%);
-  background-size: 3.2rem 100%, 100% 100%, 100% 100%;
-  border: none;
-  border-top: 1px solid color-mix(in srgb, var(--plate-accent), transparent 68%);
-  border-bottom: 1px solid color-mix(in srgb, var(--plate-secondary), transparent 78%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025), -18px 0 54px color-mix(in srgb, var(--plate-accent), transparent 91%), 0 24px 80px rgba(0, 0, 0, 0.22);
-  clip-path: polygon(0.72rem 0, 100% 0, calc(100% - 0.95rem) 100%, 0 100%, 0 0.72rem);
+    radial-gradient(ellipse at 4% 50%, color-mix(in srgb, var(--plate-accent), transparent 70%), transparent 40%),
+    radial-gradient(ellipse at 94% 50%, color-mix(in srgb, var(--plate-secondary), transparent 82%), transparent 46%),
+    linear-gradient(112deg, rgba(4, 9, 12, 0.36), rgba(4, 7, 10, 0.2));
+  box-shadow:
+    inset 0 0 30px color-mix(in srgb, var(--plate-accent), transparent 88%),
+    inset 0 0 62px color-mix(in srgb, var(--plate-secondary), transparent 92%),
+    -18px 0 58px color-mix(in srgb, var(--plate-accent), transparent 88%),
+    0 24px 80px rgba(0, 0, 0, 0.2);
+  clip-path: var(--plate-hex);
+  filter:
+    drop-shadow(0 0 2px color-mix(in srgb, var(--plate-accent), transparent 12%))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--plate-accent), transparent 70%));
+  isolation: isolate;
   pointer-events: auto;
   animation: plate-deploy 340ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-.specimen-plate::before {
+.specimen-plate::before,
+.specimen-plate::after {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 0.2rem;
-  background: linear-gradient(180deg, var(--plate-accent), var(--plate-secondary));
-  opacity: 0.78;
-  box-shadow: 0 0 18px color-mix(in srgb, var(--plate-accent), transparent 48%);
+  pointer-events: none;
   content: '';
 }
 
-.specimen-plate::after {
-  position: absolute;
-  inset: 0;
+.specimen-plate::before {
+  inset: 0.6rem;
+  z-index: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 0.48rem),
-    radial-gradient(circle at 0 0, color-mix(in srgb, var(--plate-accent), transparent 91%), transparent 34%);
+    radial-gradient(ellipse at 0 50%, color-mix(in srgb, var(--plate-accent), transparent 66%), transparent 36%),
+    radial-gradient(ellipse at 50% 0, rgba(255, 255, 255, 0.05), transparent 38%),
+    repeating-linear-gradient(180deg, transparent 0 0.72rem, rgba(255, 255, 255, 0.014) 0.72rem calc(0.72rem + 1px));
+  clip-path: var(--plate-hex);
+  opacity: 0.46;
+}
+
+.specimen-plate::after {
+  inset: 0;
+  z-index: 4;
+  padding: var(--plate-rim);
+  background: linear-gradient(
+    132deg,
+    color-mix(in srgb, var(--plate-accent), transparent 12%),
+    color-mix(in srgb, var(--plate-secondary), transparent 42%) 48%,
+    color-mix(in srgb, var(--plate-accent), transparent 30%)
+  );
+  clip-path: var(--plate-hex);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
   mix-blend-mode: screen;
-  opacity: 0.24;
-  pointer-events: none;
-  content: '';
+  opacity: 0.84;
 }
 
 @keyframes plate-deploy {
@@ -128,67 +98,144 @@
   }
 }
 
-.specimen-plate__catalog {
+.specimen-plate__scroll {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  height: 100%;
+  padding: var(--plate-pad-top) var(--plate-pad-right) var(--plate-pad-bottom) var(--plate-pad-left);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-color: color-mix(in srgb, var(--plate-accent), transparent 48%) transparent;
+  scrollbar-width: thin;
+  touch-action: pan-y;
+}
+
+.specimen-plate__catalog {
   display: flex;
   gap: 0.45rem;
   align-items: center;
-  margin: 0 0 0.7rem;
+  width: fit-content;
+  margin: 0 0 0.88rem;
+  padding-right: 0.62rem;
   color: color-mix(in srgb, var(--plate-accent), var(--paper) 36%);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--plate-accent), transparent 50%);
   text-transform: uppercase;
 }
 
 .specimen-plate__tick {
-  width: 0.72rem;
-  height: 2px;
-  background: var(--plate-accent);
-  box-shadow: 0 0 9px color-mix(in srgb, var(--plate-accent), transparent 32%);
+  width: 0.82rem;
+  height: 0.32rem;
+  background: linear-gradient(90deg, var(--plate-secondary), var(--plate-accent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--plate-accent), transparent 24%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.18rem) 100%, 0 100%);
 }
 
 .specimen-plate__role {
-  position: relative;
-  z-index: 1;
-  max-width: 32rem;
-  margin: 0 0 1.1rem;
-  color: color-mix(in srgb, var(--paper), var(--plate-secondary) 16%);
+  max-width: 29rem;
+  margin: 0 0 1.2rem;
+  color: color-mix(in srgb, var(--paper), var(--plate-secondary) 14%);
   font-size: 1.08rem;
   font-weight: 650;
   line-height: 1.35;
+  text-shadow: 0 0 18px rgba(244, 239, 230, 0.16);
+}
+
+.specimen-plate__profile {
+  display: grid;
+  grid-template-columns: minmax(7.8rem, 0.36fr) minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.45rem);
+  align-items: center;
+}
+
+.specimen-plate__portrait {
+  position: relative;
+  align-self: center;
+  width: min(11.4rem, 100%);
+  margin: 0;
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(244, 239, 230, 0.2), transparent 42%),
+    color-mix(in srgb, var(--plate-accent), transparent 90%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--plate-accent), transparent 58%),
+    inset 0 0 0 3px color-mix(in srgb, var(--plate-secondary), transparent 86%),
+    0 0 26px color-mix(in srgb, var(--plate-accent), transparent 72%);
+  clip-path: polygon(18% 0, 82% 0, 100% 28%, 100% 72%, 82% 100%, 18% 100%, 0 72%, 0 28%);
+}
+
+.specimen-plate__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.34));
+}
+
+.specimen-plate__profile-copy {
+  min-width: 0;
 }
 
 .specimen-plate__notes {
   position: relative;
-  z-index: 1;
   display: grid;
-  gap: 0.42rem;
-  padding-top: 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--plate-accent), transparent 72%);
+  gap: 0.5rem;
+  padding-top: 0.16rem;
   margin: 0;
+}
+
+.specimen-plate__notes::before {
+  position: absolute;
+  top: -0.58rem;
+  right: 18%;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--plate-accent), transparent 64%),
+    color-mix(in srgb, var(--plate-secondary), transparent 78%),
+    transparent
+  );
+  box-shadow: 0 0 12px color-mix(in srgb, var(--plate-accent), transparent 76%);
+  opacity: 0.38;
+  content: '';
 }
 
 .specimen-plate__note {
   position: relative;
   display: grid;
-  grid-template-columns: 6.25rem minmax(0, 1fr);
-  gap: 0.85rem;
+  grid-template-columns: minmax(5.35rem, 0.3fr) minmax(0, 1fr);
+  gap: 0.75rem;
   align-items: baseline;
   min-height: 2rem;
-  padding: 0.22rem 0 0.22rem 0.72rem;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 97%), transparent 55%);
+  padding: 0.28rem 0.62rem 0.3rem 0.82rem;
+  background:
+    radial-gradient(ellipse at 0 50%, color-mix(in srgb, var(--plate-secondary), transparent 88%), transparent 60%),
+    linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 94%), transparent 72%);
+  clip-path: polygon(0.5rem 0, 100% 0, calc(100% - 0.46rem) 100%, 0 100%, 0 0.5rem);
+}
+
+.specimen-plate__note:nth-child(odd) {
+  margin-left: clamp(0.14rem, 0.65vw, 0.48rem);
+}
+
+.specimen-plate__note:nth-child(even) {
+  margin-right: clamp(0.22rem, 0.85vw, 0.7rem);
 }
 
 .specimen-plate__note::before {
   position: absolute;
-  top: 0.74rem;
-  left: 0;
-  width: 0.28rem;
-  height: 0.28rem;
-  background: var(--plate-secondary);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--plate-secondary), transparent 36%);
+  top: 0.8rem;
+  left: 0.2rem;
+  width: 0.32rem;
+  height: 0.32rem;
+  background: linear-gradient(135deg, var(--plate-secondary), var(--plate-accent));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--plate-secondary), transparent 26%);
+  clip-path: polygon(0 0, 100% 0, 72% 100%, 0 100%);
   content: '';
 }
 
@@ -196,7 +243,7 @@
   color: color-mix(in srgb, var(--plate-accent), var(--paper) 22%);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.58rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
 }
 
 .specimen-plate__note dd {
@@ -219,12 +266,14 @@
 
 .specimen-plate__record-title {
   color: rgba(244, 239, 230, 0.9);
+  overflow-wrap: anywhere;
 }
 
 .specimen-plate__record-detail {
   color: color-mix(in srgb, var(--paper), transparent 28%);
   font-size: 0.78rem;
   line-height: 1.32;
+  overflow-wrap: anywhere;
 }
 
 .specimen-plate__record-link .specimen-plate__record-title {
@@ -250,26 +299,26 @@
 }
 
 .specimen-plate__scroll-cue {
-  position: sticky;
-  bottom: -1.25rem;
-  z-index: 2;
-  display: block;
-  height: 1.6rem;
-  margin: 0 -1.35rem -1.25rem -1.7rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  height: 2.2rem;
   background:
-    linear-gradient(180deg, transparent, rgba(3, 5, 8, 0.86)),
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--plate-accent), transparent 72%), transparent);
+    linear-gradient(180deg, transparent, rgba(3, 5, 8, 0.76)),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--plate-accent), transparent 78%), transparent);
   pointer-events: none;
 }
 
 .specimen-plate__scroll-cue::after {
   position: absolute;
-  right: 1rem;
-  bottom: 0.38rem;
-  left: 1.7rem;
+  right: var(--plate-pad-right);
+  bottom: 0.52rem;
+  left: var(--plate-pad-left);
   height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--plate-accent), transparent 52%), transparent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--plate-accent), transparent 50%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--plate-accent), transparent 58%), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--plate-accent), transparent 56%);
   content: '';
 }
 
@@ -281,35 +330,12 @@
     --mobile-plate-height: min(48vh, 23rem);
   }
 
-  .specimen-plate__beam {
-    top: auto;
-    right: var(--mobile-plate-right);
-    bottom: calc(var(--mobile-plate-bottom) + var(--mobile-plate-height) - 0.42rem);
-    left: var(--mobile-plate-left);
-    width: auto;
-    height: clamp(5.5rem, 16vh, 8.75rem);
-    background:
-      linear-gradient(0deg, color-mix(in srgb, var(--plate-accent), transparent 72%), color-mix(in srgb, var(--plate-accent), transparent 91%) 48%, transparent 92%),
-      repeating-linear-gradient(90deg, transparent 0 1.65rem, color-mix(in srgb, var(--plate-accent), transparent 90%) 1.65rem calc(1.65rem + 1px)),
-      linear-gradient(90deg, transparent, color-mix(in srgb, var(--plate-secondary), transparent 90%), transparent);
-    clip-path: polygon(8% 100%, 92% 100%, 59% 0, 41% 0);
-    transform: none;
-  }
-
-  .specimen-plate__beam::before {
-    inset: auto 45% 0;
-    height: 100%;
-    background: linear-gradient(0deg, color-mix(in srgb, var(--plate-secondary), transparent 52%), color-mix(in srgb, var(--plate-accent), transparent 88%), transparent);
-  }
-
-  .specimen-plate__beam::after {
-    top: -0.18rem;
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
   .specimen-plate {
+    --plate-cut: clamp(1.55rem, 7vw, 2.35rem);
+    --plate-pad-top: 0.86rem;
+    --plate-pad-right: clamp(1.3rem, 5.6vw, 1.85rem);
+    --plate-pad-bottom: 0.98rem;
+    --plate-pad-left: clamp(1.55rem, 6.2vw, 2.05rem);
     top: auto;
     right: var(--mobile-plate-right);
     bottom: var(--mobile-plate-bottom);
@@ -317,47 +343,22 @@
     width: auto;
     height: var(--mobile-plate-height);
     max-height: none;
-    padding: 0.78rem 0.88rem 0.9rem 1.08rem;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    background:
-      linear-gradient(90deg, color-mix(in srgb, var(--plate-accent), transparent 91%) 0 1px, transparent 1px 100%),
-      linear-gradient(180deg, rgba(3, 6, 9, 0.68), rgba(3, 5, 8, 0.44));
-    background-size: 2.35rem 100%, 100% 100%;
-    border: none;
-    border-top: 1px solid color-mix(in srgb, var(--plate-accent), transparent 68%);
-    border-bottom: 1px solid color-mix(in srgb, var(--plate-secondary), transparent 78%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025), 0 18px 50px rgba(0, 0, 0, 0.32);
-    clip-path: polygon(0.54rem 0, 100% 0, calc(100% - 0.7rem) 100%, 0 100%, 0 0.54rem);
-    pointer-events: auto;
     transform: none;
     animation: none;
   }
 
-  .specimen-plate__scroll-cue {
-    bottom: -0.9rem;
-    height: 1.35rem;
-    margin: 0 -0.88rem -0.9rem -1.08rem;
-  }
-
-  .specimen-plate__scroll-cue::after {
-    right: 0.74rem;
-    bottom: 0.32rem;
-    left: 1.08rem;
-  }
-
   .specimen-plate::before {
-    width: 0.24rem;
+    inset: 0.42rem;
   }
 
   .specimen-plate::after {
-    opacity: 0.18;
+    opacity: 0.72;
   }
 
   .specimen-plate__catalog {
     flex-wrap: wrap;
     gap: 0.36rem;
-    margin-bottom: 0.34rem;
+    margin-bottom: 0.42rem;
     font-size: 0.52rem;
     letter-spacing: 0;
   }
@@ -368,23 +369,45 @@
 
   .specimen-plate__role {
     max-width: none;
-    margin-bottom: 0;
+    margin-bottom: 0.78rem;
     font-size: 0.9rem;
     line-height: 1.28;
   }
 
+  .specimen-plate__profile {
+    grid-template-columns: minmax(5.2rem, 0.32fr) minmax(0, 1fr);
+    gap: 0.72rem;
+    align-items: start;
+  }
+
+  .specimen-plate__portrait {
+    width: min(7.2rem, 100%);
+  }
+
   .specimen-plate__notes {
-    display: grid;
     gap: 0.34rem;
-    padding-top: 0.72rem;
-    margin-top: 0.72rem;
+    padding-top: 0.58rem;
+    margin-top: 0.58rem;
+  }
+
+  .specimen-plate__notes::before {
+    top: 0;
+    right: 12%;
+    opacity: 0.34;
   }
 
   .specimen-plate__note {
     grid-template-columns: minmax(4.55rem, 0.4fr) minmax(0, 1fr);
     gap: 0.55rem;
     min-height: auto;
-    padding: 0.16rem 0 0.16rem 0.56rem;
+    padding: 0.18rem 0.38rem 0.18rem 0.58rem;
+    clip-path: polygon(0.34rem 0, 100% 0, calc(100% - 0.34rem) 100%, 0 100%, 0 0.34rem);
+  }
+
+  .specimen-plate__note:nth-child(odd),
+  .specimen-plate__note:nth-child(even) {
+    margin-right: 0;
+    margin-left: 0;
   }
 
   .specimen-plate__note::before {
@@ -407,6 +430,10 @@
     font-size: 0.66rem;
     line-height: 1.28;
   }
+
+  .specimen-plate__scroll-cue {
+    height: 1.75rem;
+  }
 }
 
 @media (max-width: 520px) {
@@ -418,7 +445,20 @@
   }
 
   .specimen-plate {
-    padding: 0.72rem 0.72rem 0.8rem 0.95rem;
+    --plate-cut: clamp(1.25rem, 7vw, 1.8rem);
+    --plate-pad-top: 0.74rem;
+    --plate-pad-right: 1.12rem;
+    --plate-pad-bottom: 0.86rem;
+    --plate-pad-left: 1.3rem;
+  }
+
+  .specimen-plate__profile {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .specimen-plate__portrait {
+    width: 6.8rem;
   }
 
   .specimen-plate__note {

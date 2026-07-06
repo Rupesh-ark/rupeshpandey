@@ -1,4 +1,4 @@
-export type LifePropId = 'career' | 'projects' | 'education' | 'contact' | 'blogs';
+export type LifePropId = 'profile' | 'career' | 'projects' | 'education' | 'contact';
 
 export interface LifeProp {
   id: LifePropId;
@@ -9,6 +9,10 @@ export interface LifeProp {
   readout: {
     catalog: string;
     role: string;
+    portrait?: {
+      src: string;
+      alt: string;
+    };
     records: Array<{
       label: string;
       value: string;
@@ -19,6 +23,27 @@ export interface LifeProp {
 }
 
 export const LIFE_PROPS: LifeProp[] = [
+  {
+    id: 'profile',
+    label: 'Profile',
+    code: 'R',
+    color: '#f4efe6',
+    accent: '#24d8ff',
+    readout: {
+      catalog: 'R-00 · ID',
+      role: 'Generalist engineer. MSc student. Builder of systems, scenes, and useful weird ideas.',
+      portrait: {
+        src: '/images/Rupesh_Pandey-480.webp',
+        alt: 'Rupesh Pandey',
+      },
+      records: [
+        { label: 'ROLE', value: 'Generalist engineer' },
+        { label: 'STUDY', value: 'MSc Software Engineering', detail: 'Heriot-Watt University · expected 2026' },
+        { label: 'FOCUS', value: 'Systems, scenes, and practical tools' },
+        { label: 'BASE', value: 'Edinburgh, UK' },
+      ],
+    },
+  },
   {
     id: 'career',
     label: 'Career',
@@ -84,22 +109,6 @@ export const LIFE_PROPS: LifeProp[] = [
         { label: 'GITHUB', value: '@Rupesh-ark', href: 'https://github.com/Rupesh-ark' },
         { label: 'LINKEDIN', value: '/in/ssh-rupesh', href: 'https://www.linkedin.com/in/ssh-rupesh/' },
         { label: 'BASE', value: 'Edinburgh, UK' },
-      ],
-    },
-  },
-  {
-    id: 'blogs',
-    label: 'Blogs',
-    code: 'B',
-    color: '#f4efe6',
-    accent: '#9aa8ff',
-    readout: {
-      catalog: 'R-05 · LOG',
-      role: 'Writing slot reserved for notes, build logs, and essays',
-      records: [
-        { label: 'STATUS', value: 'Archive slot created' },
-        { label: 'THEMES', value: 'Open source, game systems, engineering notes' },
-        { label: 'FORMAT', value: 'Short field notes before long essays' },
       ],
     },
   },
