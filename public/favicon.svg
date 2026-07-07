@@ -10,9 +10,9 @@
       <stop offset="1" stop-color="#4f3216"/>
     </linearGradient>
     <radialGradient id="lens" cx="46%" cy="38%" r="58%">
-      <stop offset="0" stop-color="#9feeff"/>
-      <stop offset="0.38" stop-color="#1c94aa"/>
-      <stop offset="1" stop-color="#07212a"/>
+      <stop offset="0" stop-color="#ffb59c"/>
+      <stop offset="0.38" stop-color="#a32e22"/>
+      <stop offset="1" stop-color="#2a0a06"/>
     </radialGradient>
   </defs>
   <rect width="64" height="64" rx="14" fill="url(#field)"/>
