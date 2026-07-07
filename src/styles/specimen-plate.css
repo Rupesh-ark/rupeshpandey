@@ -319,9 +319,9 @@
   bottom: 0;
   left: 0;
   z-index: 3;
-  height: 2.2rem;
+  height: 3rem;
   background:
-    linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper-2), transparent 8%)),
+    linear-gradient(180deg, transparent, color-mix(in srgb, var(--paper-2), transparent 30%) 55%, var(--paper-2) 92%),
     linear-gradient(90deg, transparent, rgba(160, 124, 62, 0.12), transparent);
   pointer-events: none;
 }
@@ -344,21 +344,24 @@
     --mobile-plate-height: min(48vh, 23rem);
   }
 
+  /* Docked ledger slip: the sheet sits square with the screen (the desk-tilt
+     reads as misalignment when the paper runs edge to edge) and only grows as
+     tall as its entries, up to the dock line. */
   .specimen-plate {
     --plate-cut: clamp(1.55rem, 7vw, 2.35rem);
-    --plate-pad-top: 0.86rem;
+    --plate-pad-top: 0.92rem;
     --plate-pad-right: clamp(1.3rem, 5.6vw, 1.85rem);
-    --plate-pad-bottom: 0.98rem;
+    --plate-pad-bottom: 1.5rem;
     --plate-pad-left: clamp(1.55rem, 6.2vw, 2.05rem);
     top: auto;
     right: var(--mobile-plate-right);
     bottom: var(--mobile-plate-bottom);
     left: var(--mobile-plate-left);
     width: auto;
-    height: var(--mobile-plate-height);
+    height: auto;
     min-height: 0;
-    max-height: none;
-    transform: rotate(-0.6deg);
+    max-height: var(--mobile-plate-height);
+    transform: none;
     animation: none;
     transition: none;
   }
@@ -377,9 +380,9 @@
   .specimen-plate__catalog {
     flex-wrap: wrap;
     gap: 0.36rem;
-    margin-bottom: 0.42rem;
-    font-size: 0.6rem;
-    letter-spacing: 0;
+    margin-bottom: 0.55rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
   }
 
   .specimen-plate__tick {
@@ -388,9 +391,9 @@
 
   .specimen-plate__role {
     max-width: none;
-    margin-bottom: 0.78rem;
-    font-size: 0.9rem;
-    line-height: 1.28;
+    margin-bottom: 0.85rem;
+    font-size: 0.98rem;
+    line-height: 1.4;
   }
 
   .specimen-plate__profile {
@@ -415,11 +418,14 @@
     opacity: 0.34;
   }
 
+  /* Ledger entries stack label-over-value: at phone widths the side-by-side
+     columns cramp every value into ragged wraps beside a half-empty label. */
   .specimen-plate__note {
-    grid-template-columns: minmax(4.55rem, 0.4fr) minmax(0, 1fr);
-    gap: 0.55rem;
+    grid-template-columns: 1fr;
+    gap: 0.18rem;
+    align-items: start;
     min-height: auto;
-    padding: 0.18rem 0.38rem 0.18rem 0.58rem;
+    padding: 0.44rem 0.5rem 0.52rem 0.72rem;
     clip-path: polygon(0.34rem 0, 100% 0, calc(100% - 0.34rem) 100%, 0 100%, 0 0.34rem);
   }
 
@@ -430,28 +436,28 @@
   }
 
   .specimen-plate__note::before {
-    top: 0.58rem;
-    width: 0.24rem;
-    height: 0.24rem;
+    top: 0.62rem;
+    width: 0.26rem;
+    height: 0.26rem;
   }
 
   .specimen-plate__note dt {
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
   }
 
   .specimen-plate__note dd {
-    font-size: 0.78rem;
-    line-height: 1.32;
+    font-size: 0.92rem;
+    line-height: 1.4;
   }
 
   .specimen-plate__record-detail {
-    font-size: 0.74rem;
-    line-height: 1.28;
+    font-size: 0.82rem;
+    line-height: 1.34;
   }
 
   .specimen-plate__scroll-cue {
-    height: 1.75rem;
+    height: 2.4rem;
   }
 }
 
@@ -484,8 +490,4 @@
     width: 7.4rem;
   }
 
-  .specimen-plate__note {
-    grid-template-columns: minmax(4rem, 0.38fr) minmax(0, 1fr);
-    gap: 0.45rem;
-  }
 }
