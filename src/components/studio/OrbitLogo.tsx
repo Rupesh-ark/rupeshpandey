@@ -27,12 +27,14 @@ export function OrbitLogo({
   useFrame((state) => {
     if (!animatedRef.current) return;
     if (!groupRef.current) return;
-    const elapsed = reducedMotion ? 0 : state.clock.elapsedTime;
+    // The tokens are the section navigation: they orbit at full speed even
+    // under prefers-reduced-motion, so the scene behaves the same everywhere.
+    const elapsed = state.clock.elapsedTime;
     const angle = baseAngle + elapsed * 0.38;
     const radius = active ? 0.57 : 0.66;
     groupRef.current.position.set(
       Math.sin(angle) * radius,
-      0.32 + Math.sin(elapsed * 1.7 + index) * (reducedMotion ? 0 : 0.035),
+      0.32 + Math.sin(elapsed * 1.7 + index) * 0.035,
       Math.cos(angle) * radius,
     );
   });

@@ -1,7 +1,6 @@
 import { useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useSpinChimes } from '../../hooks/useSpinChimes';
 
 const YAW_LIMIT = 0.5;
@@ -19,7 +18,6 @@ function getPointerCaptureTarget(target: EventTarget | null): PointerCaptureTarg
 }
 
 export function RotatableCapsule({ opened, spinRequest, children }: { opened: boolean; spinRequest: number; children: ReactNode }) {
-  const reducedMotion = useReducedMotion();
   const groupRef = useRef<THREE.Group>(null);
   const dragging = useRef(false);
   const startX = useRef(0);
@@ -36,9 +34,7 @@ export function RotatableCapsule({ opened, spinRequest, children }: { opened: bo
   const endDrag = () => {
     if (!dragging.current) return;
     dragging.current = false;
-    flickVelocity.current = reducedMotion
-      ? 0
-      : THREE.MathUtils.clamp(smoothedDragVelocity.current, -6, 6);
+    flickVelocity.current = THREE.MathUtils.clamp(smoothedDragVelocity.current, -6, 6);
   };
 
   useFrame((_, delta) => {
@@ -56,12 +52,12 @@ export function RotatableCapsule({ opened, spinRequest, children }: { opened: bo
 
     if (opened && spinRequest !== lastSpinRequest.current) {
       lastSpinRequest.current = spinRequest;
-      spinVelocity.current += reducedMotion ? Math.PI * 0.7 : Math.PI * 3.2;
+      spinVelocity.current += Math.PI * 3.2;
     }
 
     if (spinVelocity.current !== 0) {
       spinOffset.current += spinVelocity.current * dt;
-      spinVelocity.current *= Math.exp(-dt * (reducedMotion ? 12 : 2.4));
+      spinVelocity.current *= Math.exp(-dt * 2.4);
       if (Math.abs(spinVelocity.current) < 0.01) spinVelocity.current = 0;
     }
 
