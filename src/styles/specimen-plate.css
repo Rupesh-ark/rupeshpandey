@@ -404,7 +404,9 @@
   .specimen-plate__role {
     max-width: none;
     margin-bottom: 0.85rem;
+    color: #2b2118;
     font-size: 0.98rem;
+    font-weight: 600;
     line-height: 1.4;
   }
 
@@ -459,12 +461,20 @@
   }
 
   .specimen-plate__note dd {
+    color: #2b2118;
     font-size: 0.92rem;
+    font-weight: 500;
     line-height: 1.4;
   }
 
+  .specimen-plate__record-title {
+    color: #2b2118;
+  }
+
   .specimen-plate__record-detail {
+    color: rgba(43, 33, 24, 0.9);
     font-size: 0.82rem;
+    font-weight: 500;
     line-height: 1.34;
   }
 
