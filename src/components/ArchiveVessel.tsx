@@ -1,35 +1,42 @@
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { LIFE_PROPS } from '../data/lifeProps';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { setBodyCursor } from '../utils/bodyCursor';
 
-interface PokeballProps {
+interface ArchiveVesselProps {
   opened: boolean;
   charging: boolean;
+  audioEnergyRef: { current: number };
   onCenterClick: () => void;
 }
 
 const RADIUS = 1.22;
-const SHELL_PANEL_ANGLES = Array.from({ length: 10 }, (_, index) => (index / 10) * Math.PI * 2);
-const ACCENT_ANGLES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
-const ACCENT_OFFSETS = [-0.035, 0, 0.035];
-const LOWER_VENT_OFFSETS = [-0.05, 0, 0.05];
+// The lid seam sits well above the equator so the vessel reads as an urn
+// with a domed cap, not a sphere split into hemispheres.
+const LID_LATITUDE = 0.42;
+const SEAM_THETA = Math.acos(LID_LATITUDE);
+const SEAM_Y = RADIUS * LID_LATITUDE;
+const SEAM_R = RADIUS * Math.sin(SEAM_THETA);
+// The collar between the equator and the lid seam is smoked glass: it keeps
+// the urn silhouette but lets the studio inside stay visible, especially on
+// mobile where the camera sits low.
+const COLLAR_RIB_ANGLES = Array.from({ length: 6 }, (_, index) => (index / 6) * Math.PI * 2);
+const COLLAR_TILT = Math.atan2(RADIUS - SEAM_R, SEAM_Y);
+const COLLAR_MID_R = (RADIUS + SEAM_R) / 2 - 0.01;
+// One gem per exhibit, wearing that exhibit token's colour.
+const GEM_ANGLES = LIFE_PROPS.map((_, index) => Math.PI / LIFE_PROPS.length + (index / LIFE_PROPS.length) * Math.PI * 2);
 const UNIT_SCALE = new THREE.Vector3(1, 1, 1);
-const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
-function createInstanceMatrix(position: THREE.Vector3, rotationY: number) {
+// Ribs chord the glass collar from the equator ring up to the seam band,
+// leaning inward to follow the sphere ('YXZ': lean first, then yaw into place).
+function createCollarRibMatrix(angle: number) {
   return new THREE.Matrix4().compose(
-    position,
-    new THREE.Quaternion().setFromEuler(new THREE.Euler(0, rotationY, 0)),
+    new THREE.Vector3(Math.sin(angle) * COLLAR_MID_R, SEAM_Y / 2, Math.cos(angle) * COLLAR_MID_R),
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(-COLLAR_TILT, angle, 0, 'YXZ')),
     UNIT_SCALE,
   );
-}
-
-function createOffsetRadialMatrix(radius: number, y: number, angle: number, offset: number) {
-  const base = new THREE.Vector3(Math.sin(angle) * radius, y, Math.cos(angle) * radius);
-  const position = base.add(new THREE.Vector3(offset, 0, 0).applyAxisAngle(Y_AXIS, angle));
-  return createInstanceMatrix(position, angle);
 }
 
 function StaticInstances({ matrices, material, children }: { matrices: THREE.Matrix4[]; material: THREE.Material; children: ReactNode }) {
@@ -49,7 +56,7 @@ function StaticInstances({ matrices, material, children }: { matrices: THREE.Mat
   );
 }
 
-export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
+export function ArchiveVessel({ opened, charging, audioEnergyRef, onCenterClick }: ArchiveVesselProps) {
   const reducedMotion = useReducedMotion();
   const lidPivotRef = useRef<THREE.Group>(null);
   const buttonRef = useRef<THREE.Group>(null);
@@ -62,11 +69,10 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
 
   const materials = useMemo(
     () => ({
-      upperShell: new THREE.MeshStandardMaterial({ color: '#6e1a14', roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide, transparent: true }),
+      upperShell: new THREE.MeshStandardMaterial({ color: '#46311b', roughness: 0.4, metalness: 0.34, side: THREE.DoubleSide, transparent: true, forceSinglePass: true }),
       lowerShell: new THREE.MeshStandardMaterial({ color: '#c9bb9b', roughness: 0.58, metalness: 0.12, side: THREE.DoubleSide }),
+      collar: new THREE.MeshStandardMaterial({ color: '#d6c8a6', transparent: true, opacity: 0.3, roughness: 0.18, metalness: 0.15, side: THREE.DoubleSide, forceSinglePass: true, depthWrite: false }),
       black: new THREE.MeshStandardMaterial({ color: '#0f0a06', roughness: 0.5, metalness: 0.72 }),
-      inner: new THREE.MeshStandardMaterial({ color: '#0c0805', roughness: 0.48, metalness: 0.78 }),
-      button: new THREE.MeshStandardMaterial({ color: '#e2d6ba', roughness: 0.32, metalness: 0.25 }),
       buttonCore: new THREE.MeshStandardMaterial({ color: '#a32e22', emissive: '#571510', emissiveIntensity: 0.22, roughness: 0.16, metalness: 0.62 }),
       trim: new THREE.MeshStandardMaterial({ color: '#8c6f3f', roughness: 0.45, metalness: 0.8 }),
       copper: new THREE.MeshStandardMaterial({ color: '#9c5a28', roughness: 0.32, metalness: 0.72 }),
@@ -76,22 +82,14 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
     }),
     [],
   );
-  const upperPanelMatrices = useMemo(
-    () => SHELL_PANEL_ANGLES.map((angle) => createInstanceMatrix(new THREE.Vector3(Math.sin(angle) * 0.78, 0.2, Math.cos(angle) * 0.78), angle)),
+  // One material per gem is deliberate (per-gem emissive colour can't ride
+  // instanceColor), but the octahedron geometry is shared across all five.
+  const gemMaterials = useMemo(
+    () => LIFE_PROPS.map((prop) => new THREE.MeshStandardMaterial({ color: prop.color, emissive: prop.color, emissiveIntensity: 0.5, roughness: 0.12, metalness: 0.35 })),
     [],
   );
-  const upperCoilMatrices = useMemo(
-    () => ACCENT_ANGLES.flatMap((angle) => ACCENT_OFFSETS.map((offset) => createOffsetRadialMatrix(0.88, 0.08, angle, offset))),
-    [],
-  );
-  const lowerPanelMatrices = useMemo(
-    () => SHELL_PANEL_ANGLES.map((angle) => createInstanceMatrix(new THREE.Vector3(Math.sin(angle) * 0.88, -0.2, Math.cos(angle) * 0.88), angle)),
-    [],
-  );
-  const lowerVentMatrices = useMemo(
-    () => ACCENT_ANGLES.flatMap((angle) => LOWER_VENT_OFFSETS.map((offset) => createOffsetRadialMatrix(0.92, -0.05, angle, offset))),
-    [],
-  );
+  const gemGeometry = useMemo(() => new THREE.OctahedronGeometry(0.055, 0), []);
+  const collarRibMatrices = useMemo(() => COLLAR_RIB_ANGLES.map(createCollarRibMatrix), []);
 
   useEffect(() => {
     if (!opened && !charging) return;
@@ -137,6 +135,13 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
     }
 
     materials.upperShell.opacity = 1 - open * 0.28;
+    // The glass collar clears further as the lid opens so the studio reads
+    // through it. The gems keep a faint ember shimmer, ride the live music
+    // energy, and flare while charging.
+    materials.collar.opacity = 0.3 - open * 0.16;
+    const gemShimmer = (Math.sin(state.clock.elapsedTime * 1.9) + 1) * 0.5;
+    const gemGlow = 0.38 + gemShimmer * 0.3 + audioEnergyRef.current * 1.5 + chargeGlow * 0.6;
+    for (const material of gemMaterials) material.emissiveIntensity = gemGlow;
 
     // While the lid is fully shut the shell is opaque, so skip the two-pass
     // transparent path (it renders the near-fullscreen shell twice and
@@ -168,52 +173,58 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
 
   return (
     <group position={[0, 0, 0]}>
-      <group ref={lidPivotRef} position={[0, 0, -RADIUS]}>
-        <mesh position={[0, 0, RADIUS]} material={materials.upperShell}>
-          <sphereGeometry args={[RADIUS, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        </mesh>
-        <group position={[0, 0, RADIUS]}>
-          <StaticInstances matrices={upperPanelMatrices} material={materials.inner}>
-            <boxGeometry args={[0.28, 0.24, 0.045]} />
-          </StaticInstances>
-          <StaticInstances matrices={upperCoilMatrices} material={materials.copper}>
-            <boxGeometry args={[0.012, 0.09, 0.08]} />
-          </StaticInstances>
-          <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.012, 0]} material={materials.trim}>
-            <torusGeometry args={[1.01, 0.011, 8, 80]} />
+      <group ref={lidPivotRef} position={[0, SEAM_Y, -SEAM_R]}>
+        <group position={[0, -SEAM_Y, SEAM_R]}>
+          <mesh material={materials.upperShell}>
+            <sphereGeometry args={[RADIUS, 48, 24, 0, Math.PI * 2, 0, SEAM_THETA]} />
+          </mesh>
+          <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, SEAM_Y + 0.012, 0]} material={materials.trim}>
+            <torusGeometry args={[SEAM_R - 0.1, 0.011, 8, 80]} />
+          </mesh>
+          <mesh position={[0, SEAM_Y + 0.015, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.lidLine}>
+            <torusGeometry args={[0.64, 0.01, 8, 64]} />
+          </mesh>
+          <mesh position={[0, SEAM_Y + 0.018, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.lidLine}>
+            <torusGeometry args={[0.4, 0.008, 8, 64]} />
+          </mesh>
+          <mesh position={[0, SEAM_Y + 0.02, 0]} rotation={[Math.PI / 2, 0, Math.PI / 4]} material={materials.lidLine}>
+            <ringGeometry args={[0.16, 0.17, 48, 1, 0, Math.PI]} />
+          </mesh>
+          <mesh position={[0, RADIUS + 0.02, 0]} material={materials.trim}>
+            <cylinderGeometry args={[0.085, 0.13, 0.1, 24]} />
+          </mesh>
+          <mesh position={[0, RADIUS + 0.1, 0]} material={materials.copper}>
+            <sphereGeometry args={[0.072, 20, 16]} />
           </mesh>
         </group>
-        <mesh position={[0, 0.015, RADIUS]} rotation={[Math.PI / 2, 0, 0]} material={materials.lidLine}>
-          <torusGeometry args={[0.72, 0.01, 8, 64]} />
-        </mesh>
-        <mesh position={[0, 0.018, RADIUS]} rotation={[Math.PI / 2, 0, 0]} material={materials.lidLine}>
-          <torusGeometry args={[0.46, 0.008, 8, 64]} />
-        </mesh>
-        <mesh position={[0, 0.02, RADIUS]} rotation={[Math.PI / 2, 0, Math.PI / 4]} material={materials.lidLine}>
-          <ringGeometry args={[0.18, 0.19, 48, 1, 0, Math.PI]} />
-        </mesh>
       </group>
 
+      <mesh material={materials.collar}>
+        <sphereGeometry args={[RADIUS, 48, 12, 0, Math.PI * 2, SEAM_THETA, Math.PI / 2 - SEAM_THETA]} />
+      </mesh>
       <mesh material={materials.lowerShell}>
-        <sphereGeometry args={[RADIUS, 48, 24, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
+        <sphereGeometry args={[RADIUS, 48, 18, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
       </mesh>
-      <group>
-        <StaticInstances matrices={lowerPanelMatrices} material={materials.inner}>
-          <boxGeometry args={[0.3, 0.36, 0.05]} />
-        </StaticInstances>
-        <StaticInstances matrices={lowerVentMatrices} material={materials.copper}>
-          <boxGeometry args={[0.014, 0.11, 0.055]} />
-        </StaticInstances>
-      </group>
-
-      <mesh rotation={[Math.PI / 2, 0, 0]} material={materials.black}>
-        <torusGeometry args={[RADIUS, 0.065, 12, 80]} />
-      </mesh>
+      <StaticInstances matrices={collarRibMatrices} material={materials.trim}>
+        <boxGeometry args={[0.032, 0.56, 0.05]} />
+      </StaticInstances>
       <mesh rotation={[Math.PI / 2, 0, 0]} material={materials.trim}>
-        <torusGeometry args={[RADIUS + 0.055, 0.014, 8, 80]} />
+        <torusGeometry args={[RADIUS + 0.008, 0.016, 8, 80]} />
       </mesh>
-      <mesh ref={seamGlowRef} rotation={[Math.PI / 2, 0, 0]} material={materials.glow}>
-        <torusGeometry args={[RADIUS + 0.008, 0.018, 8, 80]} />
+      <mesh position={[0, SEAM_Y, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.black}>
+        <torusGeometry args={[SEAM_R + 0.008, 0.03, 12, 80]} />
+      </mesh>
+      {GEM_ANGLES.map((angle, index) => (
+        <mesh
+          key={LIFE_PROPS[index].id}
+          position={[Math.sin(angle) * (SEAM_R + 0.02), SEAM_Y - 0.02, Math.cos(angle) * (SEAM_R + 0.02)]}
+          rotation={[0, angle, 0]}
+          material={gemMaterials[index]}
+          geometry={gemGeometry}
+        />
+      ))}
+      <mesh ref={seamGlowRef} position={[0, SEAM_Y, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.glow}>
+        <torusGeometry args={[SEAM_R + 0.014, 0.016, 8, 80]} />
       </mesh>
 
       <group
@@ -242,26 +253,23 @@ export function Pokeball({ opened, charging, onCenterClick }: PokeballProps) {
           setBodyCursor('auto');
         }}
       >
-        <mesh material={materials.black}>
-          <cylinderGeometry args={[0.26, 0.26, 0.08, 40]} />
+        <mesh material={materials.trim}>
+          <cylinderGeometry args={[0.27, 0.28, 0.07, 6]} />
         </mesh>
-        <mesh position={[0, 0.045, 0]} material={materials.trim}>
-          <cylinderGeometry args={[0.21, 0.21, 0.045, 40]} />
+        <mesh position={[0, 0.042, 0]} material={materials.copper}>
+          <cylinderGeometry args={[0.21, 0.22, 0.04, 6]} />
         </mesh>
-        <mesh position={[0, 0.073, 0]} material={materials.button}>
-          <cylinderGeometry args={[0.16, 0.18, 0.04, 40]} />
+        <mesh position={[0, 0.07, 0]} material={materials.black}>
+          <cylinderGeometry args={[0.155, 0.165, 0.035, 28]} />
         </mesh>
-        <mesh position={[0, 0.1, 0]} material={materials.black}>
-          <cylinderGeometry args={[0.106, 0.112, 0.024, 32]} />
+        <mesh position={[0, 0.094, 0]} material={materials.buttonCore}>
+          <cylinderGeometry args={[0.125, 0.14, 0.03, 28]} />
         </mesh>
-        <mesh position={[0, 0.119, 0]} material={materials.buttonCore}>
-          <cylinderGeometry args={[0.066, 0.076, 0.022, 32]} />
+        <mesh position={[0, 0.112, 0]} rotation={[-Math.PI / 2, 0, 0]} material={materials.trim}>
+          <torusGeometry args={[0.09, 0.005, 8, 40]} />
         </mesh>
-        <mesh position={[0, 0.133, 0]} rotation={[-Math.PI / 2, 0, 0]} material={materials.trim}>
-          <torusGeometry args={[0.071, 0.005, 8, 40]} />
-        </mesh>
-        <mesh ref={buttonGlowRef} position={[0, 0.139, 0]} rotation={[-Math.PI / 2, 0, 0]} material={materials.buttonGlow}>
-          <ringGeometry args={[0.05, 0.095, 40]} />
+        <mesh ref={buttonGlowRef} position={[0, 0.12, 0]} rotation={[-Math.PI / 2, 0, 0]} material={materials.buttonGlow}>
+          <ringGeometry args={[0.06, 0.11, 40]} />
         </mesh>
       </group>
     </group>

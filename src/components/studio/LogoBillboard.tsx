@@ -5,6 +5,10 @@ import type { LifeProp } from '../../data/lifeProps';
 import { setBodyCursor } from '../../utils/bodyCursor';
 import { useLogoTexture } from './logoTexture';
 
+// Scratch quaternion for the per-frame billboard math — never allocated in
+// the frame loop.
+const parentWorldQuaternion = new THREE.Quaternion();
+
 export function LogoBillboard({
   prop,
   active,
@@ -34,7 +38,15 @@ export function LogoBillboard({
   useFrame((_, delta) => {
     if (animatedRef && !animatedRef.current) return;
     if (!groupRef.current) return;
-    groupRef.current.quaternion.copy(camera.quaternion);
+    // Face the camera in world space: compensate for parent rotations
+    // (tilted orbit planes, the user-spun capsule) instead of assuming an
+    // unrotated parent chain.
+    if (groupRef.current.parent) {
+      groupRef.current.parent.getWorldQuaternion(parentWorldQuaternion).invert();
+      groupRef.current.quaternion.multiplyQuaternions(parentWorldQuaternion, camera.quaternion);
+    } else {
+      groupRef.current.quaternion.copy(camera.quaternion);
+    }
     const targetScale = !reducedMotion && onClick && hovering.current ? 1.14 : 1;
     const scale = groupRef.current.scale.x + (targetScale - groupRef.current.scale.x) * (reducedMotion ? 1 : Math.min(1, delta * 9));
     groupRef.current.scale.setScalar(scale);

@@ -6,7 +6,7 @@ const MIN_INTERVAL_MS = 90; // cascade cap so fast spins shimmer instead of clat
 const FULL_SPEED = 3; // rad/s that counts as a fast spin
 
 /**
- * Wind-chime rotation feedback: turning the ball strikes soft pentatonic
+ * Wind-chime rotation feedback: turning the vessel strikes soft pentatonic
  * bells — ascending when turned forward, descending backward, denser and a
  * touch brighter with speed. Calm by construction: every note is consonant.
  */

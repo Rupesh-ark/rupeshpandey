@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Pokeball } from './Pokeball';
+import { ArchiveVessel } from './ArchiveVessel';
 import { ArchiveConsole3D } from './scene/ArchiveConsole3D';
 import { CameraManager } from './scene/CameraManager';
 import { InspectionSurface } from './scene/InspectionSurface';
@@ -75,7 +75,7 @@ function SceneContents({ opened, charging, prepareStudio, activePropId, spinRequ
       <InspectionSurface />
       {opened && showConsole && <ArchiveConsole3D activePropId={activePropId} musicEnabled={musicEnabled} onClose={onCenterClick} onToggleMusic={onToggleMusic} onDownloadCv={onDownloadCv} onSpin={onSpinArchive} />}
       <RotatableCapsule opened={opened} spinRequest={spinRequest}>
-        <Pokeball opened={opened} charging={charging} onCenterClick={onCenterClick} />
+        <ArchiveVessel opened={opened} charging={charging} audioEnergyRef={audioEnergyRef} onCenterClick={onCenterClick} />
         {prepareStudio && (
           <Suspense fallback={null}>
             <StudioLoader visible={opened} activePropId={activePropId} musicEnabled={musicEnabled} audioEnergyRef={audioEnergyRef} performancePausedRef={performancePausedRef} onSelectProp={onSelectProp} onStudioReady={onStudioReady} />

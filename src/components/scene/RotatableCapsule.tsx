@@ -61,7 +61,7 @@ export function RotatableCapsule({ opened, spinRequest, children }: { opened: bo
       if (Math.abs(spinVelocity.current) < 0.01) spinVelocity.current = 0;
     }
 
-    // Released flick keeps the ball coasting, easing out like a slipping platter.
+    // Released flick keeps the vessel coasting, easing out like a slipping platter.
     if (!dragging.current && flickVelocity.current !== 0) {
       targetYaw.current += flickVelocity.current * dt;
       flickVelocity.current *= Math.exp(-dt * 3.2);

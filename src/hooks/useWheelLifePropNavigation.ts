@@ -5,7 +5,7 @@ const SPECIMEN_PLATE_SELECTOR = '.specimen-plate';
 const MIN_WHEEL_DELTA = 8;
 const WHEEL_GESTURE_IDLE_MS = 260;
 // Touch swipes: predominantly-vertical flicks on the scene navigate sections,
-// mirroring the desktop wheel gesture. Horizontal drags stay with the ball.
+// mirroring the desktop wheel gesture. Horizontal drags stay with the vessel.
 const OVERLAY_SELECTOR = '.specimen-plate, .theme-nav, .archive-console-bar, .archive-accessible-controls, button, a';
 const SWIPE_MIN_DISTANCE_PX = 48;
 const SWIPE_MAX_DURATION_MS = 650;

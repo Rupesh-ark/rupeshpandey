@@ -1,6 +1,6 @@
 # Rupesh Pandey Portfolio
 
-Interactive 3D portfolio built with a Pokeball-style archive artifact. Opening the archive reveals a compact chamber with orbiting category logos, a side navigation spine, and a specimen plate for the selected section.
+Interactive 3D portfolio built around a sealed archive-vessel artifact. Opening the archive reveals a compact chamber with orbiting category logos, a side navigation spine, and a specimen plate for the selected section.
 
 ## Stack
 
@@ -33,7 +33,7 @@ pnpm run preview    # Preview the production build locally
 - `src/App.tsx` wires archive state, selected category, audio pulse state, and top-level UI.
 - `src/components/Scene.tsx` owns the React Three Fiber canvas and composes the scene modules.
 - `src/components/scene/` contains camera, capsule rotation, inspection surface, console controls, and scene texture helpers.
-- `src/components/Pokeball.tsx` builds and animates the outer artifact.
+- `src/components/ArchiveVessel.tsx` builds and animates the outer artifact.
 - `src/components/Studio.tsx` composes the chamber modules.
 - `src/components/studio/` contains logo textures, orbit logos, pulse cracks, floor, and chamber pieces.
 - `src/components/ThemeNav.tsx` and `src/components/SpecimenPlate.tsx` render the DOM overlay UI.
