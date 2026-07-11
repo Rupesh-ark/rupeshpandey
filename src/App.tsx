@@ -42,6 +42,9 @@ export default function App() {
   const [chargeComplete, setChargeComplete] = useState(false);
   const [spinRequest, setSpinRequest] = useState(0);
   const [sceneRequested, setSceneRequested] = useState(false);
+  // Starts folded so the scene stays the hero; unfolding is a deliberate
+  // reader choice that survives exhibit switches, not a per-section setting.
+  const [plateCollapsed, setPlateCollapsed] = useState(true);
   const performancePausedRef = useRef(false);
   const specimenScrollTimer = useRef<number | null>(null);
   const opened = archivePhase === 'open';
@@ -103,6 +106,19 @@ export default function App() {
       return next;
     });
   }, []);
+
+  const handleTogglePlateCollapsed = useCallback(() => {
+    sfxClick();
+    setPlateCollapsed((current) => !current);
+  }, []);
+
+  // Clicking an orbiting token is an explicit "open this exhibit", so it also
+  // unfolds the specimen plate; nav-rail and wheel switches leave the fold as
+  // the reader left it.
+  const handleSelectPropFromScene = useCallback((id: LifePropId) => {
+    setPlateCollapsed(false);
+    handleSelectProp(id);
+  }, [handleSelectProp]);
 
   // Kept as a ref (not state): a state toggle here re-renders the entire
   // canvas tree on every scroll gesture, which is itself a frame drop.
@@ -170,7 +186,7 @@ export default function App() {
             onSpinArchive={handleSpinArchive}
             onToggleMusic={handleToggleMusicWithClick}
             onDownloadCv={handleDownloadCv}
-            onSelectProp={handleSelectProp}
+            onSelectProp={handleSelectPropFromScene}
             onStudioReady={handleStudioReady}
           />
         </Suspense>
@@ -280,7 +296,14 @@ export default function App() {
         </div>
       )}
       {opened && <ThemeNav activeProp={activeProp} onSelectProp={handleSelectProp} />}
-      {opened && <SpecimenPlate activeProp={activeProp} onScrollActivity={handleSpecimenScrollActivity} />}
+      {opened && (
+        <SpecimenPlate
+          activeProp={activeProp}
+          collapsed={plateCollapsed}
+          onToggleCollapsed={handleTogglePlateCollapsed}
+          onScrollActivity={handleSpecimenScrollActivity}
+        />
+      )}
     </>
   );
 }

@@ -3,7 +3,12 @@ import type { LifeProp } from '../data/lifeProps';
 
 const MOBILE_LAYOUT_QUERY = '(max-width: 720px)';
 
-export function SpecimenPlate({ activeProp, onScrollActivity }: { activeProp: LifeProp; onScrollActivity: () => void }) {
+export function SpecimenPlate({ activeProp, collapsed, onToggleCollapsed, onScrollActivity }: {
+  activeProp: LifeProp;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+  onScrollActivity: () => void;
+}) {
   const plateRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const showScrollCueRef = useRef(false);
@@ -42,7 +47,7 @@ export function SpecimenPlate({ activeProp, onScrollActivity }: { activeProp: Li
     syncPlateHeight();
     window.addEventListener('resize', syncPlateHeight);
     return () => window.removeEventListener('resize', syncPlateHeight);
-  }, [activeProp.id, syncPlateHeight]);
+  }, [activeProp.id, collapsed, syncPlateHeight]);
 
   const updateScrollCue = useCallback(() => {
     const scrollPanel = scrollRef.current;
@@ -141,19 +146,25 @@ export function SpecimenPlate({ activeProp, onScrollActivity }: { activeProp: Li
   return (
     <aside
       ref={plateRef}
-      className={`specimen-plate${readout.portrait ? ' specimen-plate--profile' : ''}`}
+      className={`specimen-plate${readout.portrait ? ' specimen-plate--profile' : ''}${collapsed ? ' specimen-plate--collapsed' : ''}`}
       style={plateStyle}
       aria-label={`${activeProp.label} specimen`}
       aria-live="polite"
       onWheelCapture={handleWheelCapture}
     >
       <div ref={scrollRef} className="specimen-plate__scroll" onScroll={handleScroll}>
-        <p className="specimen-plate__catalog">
+        <button
+          type="button"
+          className="specimen-plate__catalog"
+          aria-expanded={!collapsed}
+          onClick={onToggleCollapsed}
+        >
           <span className="specimen-plate__tick" aria-hidden="true" />
           <span>{readout.catalog}</span>
-        </p>
+          <span className="specimen-plate__fold" aria-hidden="true" />
+        </button>
 
-        {readout.portrait ? (
+        {!collapsed && (readout.portrait ? (
           <div className="specimen-plate__profile">
             <figure className="specimen-plate__portrait">
               <img src={readout.portrait.src} alt={readout.portrait.alt} width="480" height="470" />
@@ -168,7 +179,7 @@ export function SpecimenPlate({ activeProp, onScrollActivity }: { activeProp: Li
             <p className="specimen-plate__role">{readout.role}</p>
             {records}
           </>
-        )}
+        ))}
       </div>
       {showScrollCue && <span className="specimen-plate__scroll-cue" aria-hidden="true" />}
     </aside>
