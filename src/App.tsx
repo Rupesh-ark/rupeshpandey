@@ -42,9 +42,10 @@ export default function App() {
   const [chargeComplete, setChargeComplete] = useState(false);
   const [spinRequest, setSpinRequest] = useState(0);
   const [sceneRequested, setSceneRequested] = useState(false);
-  // Starts folded so the scene stays the hero; unfolding is a deliberate
-  // reader choice that survives exhibit switches, not a per-section setting.
-  const [plateCollapsed, setPlateCollapsed] = useState(true);
+  // Starts folded on mobile so the scene stays the hero on small screens;
+  // desktop has room for both, so it opens unfolded. The fold survives
+  // exhibit switches — it's a reader choice, not a per-section setting.
+  const [plateCollapsed, setPlateCollapsed] = useState(isMobileLayout);
   const performancePausedRef = useRef(false);
   const specimenScrollTimer = useRef<number | null>(null);
   const opened = archivePhase === 'open';
@@ -112,10 +113,10 @@ export default function App() {
     setPlateCollapsed((current) => !current);
   }, []);
 
-  // Clicking an orbiting token is an explicit "open this exhibit", so it also
-  // unfolds the specimen plate; nav-rail and wheel switches leave the fold as
-  // the reader left it.
-  const handleSelectPropFromScene = useCallback((id: LifePropId) => {
+  // Clicking an orbiting token or a nav-rail station is an explicit "open
+  // this exhibit", so it also unfolds the specimen plate; wheel switches
+  // leave the fold as the reader left it.
+  const handleOpenExhibit = useCallback((id: LifePropId) => {
     setPlateCollapsed(false);
     handleSelectProp(id);
   }, [handleSelectProp]);
@@ -186,7 +187,7 @@ export default function App() {
             onSpinArchive={handleSpinArchive}
             onToggleMusic={handleToggleMusicWithClick}
             onDownloadCv={handleDownloadCv}
-            onSelectProp={handleSelectPropFromScene}
+            onSelectProp={handleOpenExhibit}
             onStudioReady={handleStudioReady}
           />
         </Suspense>
@@ -295,7 +296,7 @@ export default function App() {
           </div>
         </div>
       )}
-      {opened && <ThemeNav activeProp={activeProp} onSelectProp={handleSelectProp} />}
+      {opened && <ThemeNav activeProp={activeProp} onSelectProp={handleOpenExhibit} />}
       {opened && (
         <SpecimenPlate
           activeProp={activeProp}
